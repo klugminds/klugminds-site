@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { siteConfig } from '@/config/site';
-import { absoluteUrl, getSiteUrl } from '@/lib/site-url';
+import { absoluteUrl, getSiteUrl, isIndexingAllowed } from '@/lib/site-url';
 
 type CreateMetadataOptions = {
   pathname?: string;
@@ -14,6 +14,7 @@ export function createMetadata(options: CreateMetadataOptions = {}): Metadata {
   const title = options.title ?? siteConfig.name;
   const description = options.description ?? siteConfig.description;
   const canonical = absoluteUrl(pathname);
+  const allowIndexing = isIndexingAllowed();
 
   return {
     metadataBase: new URL(getSiteUrl()),
@@ -39,8 +40,8 @@ export function createMetadata(options: CreateMetadataOptions = {}): Metadata {
       description,
     },
     robots: {
-      index: process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true',
-      follow: process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true',
+      index: allowIndexing,
+      follow: allowIndexing,
     },
   };
 }

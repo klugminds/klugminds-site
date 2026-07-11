@@ -89,19 +89,19 @@ public/        Static assets
 
 ## Environment variables
 
-| Variable                     | Development             | Production             |
-| ---------------------------- | ----------------------- | ---------------------- |
-| `NEXT_PUBLIC_SITE_URL`       | `http://localhost:3000` | `https://klugminds.ai` |
-| `NEXT_PUBLIC_ALLOW_INDEXING` | `false`                 | `true`                 |
+| Variable                     | Default                          | Optional override           |
+| ---------------------------- | -------------------------------- | --------------------------- |
+| `NEXT_PUBLIC_SITE_URL`       | `https://klugminds.ai`           | Local or alternate site URL |
+| `NEXT_PUBLIC_ALLOW_INDEXING` | `true` only on Vercel production | Explicit `true` or `false`  |
 
-All absolute URLs use `getSiteUrl()` from [lib/site-url.ts](lib/site-url.ts). Default fallback: `https://klugminds.ai`.
+All absolute URLs use `getSiteUrl()` from [lib/site-url.ts](lib/site-url.ts). Vercel previews and local development remain non-indexable unless explicitly enabled.
 
 ## Deployment
 
 ### Vercel (recommended)
 
 1. Import this repository in Vercel (public repo or personal account).
-2. Set `NEXT_PUBLIC_SITE_URL=https://klugminds.ai` and `NEXT_PUBLIC_ALLOW_INDEXING=true`.
+2. Deploy without environment variables; production indexing is detected automatically.
 3. Connect `klugminds.ai` DNS to Vercel.
 
 ### Production Docker

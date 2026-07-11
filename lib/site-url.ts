@@ -11,5 +11,11 @@ export function absoluteUrl(path: string): string {
 }
 
 export function isIndexingAllowed(): boolean {
-  return process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true';
+  const configuredValue = process.env.NEXT_PUBLIC_ALLOW_INDEXING;
+
+  if (configuredValue !== undefined) {
+    return configuredValue === 'true';
+  }
+
+  return process.env.VERCEL_ENV === 'production';
 }
