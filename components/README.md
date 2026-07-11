@@ -18,7 +18,7 @@ Shared, accessible components used across pages. Server components by default; c
 
 - [../styles/README.md](../styles/README.md) — design tokens
 - [../types/](../types/) — shared TypeScript types
-- [../docs/branding/README.md](../docs/branding/README.md) — brand guidelines
+- [klugminds-handbook → branding](https://github.com/klugminds/klugminds-handbook/blob/main/docs/branding/README.md) — brand guidelines
 
 ## Future Topics
 

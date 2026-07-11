@@ -18,7 +18,7 @@ The Next.js container is not exposed directly to the host.
 ## Related Documents
 
 - [../README.md](../README.md) — deployment commands
-- [../docs/infrastructure/README.md](../docs/infrastructure/README.md)
+- [klugminds-handbook → infrastructure](https://github.com/klugminds/klugminds-handbook/blob/main/docs/infrastructure/README.md)
 
 ## Future Topics
 

@@ -57,7 +57,7 @@ Out of scope:
 
 ## Security Documentation
 
-For security principles, threat modeling guidance, and secure development practices, see [docs/security/README.md](docs/security/README.md).
+For security principles, threat modeling guidance, and secure development practices, see [klugminds-handbook → docs/security](https://github.com/klugminds/klugminds-handbook/blob/main/docs/security/README.md).
 
 ## Recognition
 

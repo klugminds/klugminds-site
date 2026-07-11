@@ -1,12 +1,12 @@
-# Klugminds
+# Klugminds Website
 
-**Klugminds company website and repository.**
+**Public company website for [Klugminds](https://klugminds.ai).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About
 
-Official website for [Klugminds](https://klugminds.ai) built with Next.js 15, React 19, TypeScript, and Tailwind CSS v4. This repository also contains internal documentation under `docs/`.
+Next.js 15 company website — placeholder homepage today, foundation for blog, auth, CMS, and dashboard features. Internal company documentation lives in the private [klugminds-handbook](https://github.com/klugminds/klugminds-handbook) repository.
 
 ## Technology stack
 
@@ -18,7 +18,7 @@ Official website for [Klugminds](https://klugminds.ai) built with Next.js 15, Re
 | Styling    | Tailwind CSS v4 (CSS variables + `@theme`) |
 | Quality    | ESLint, Prettier, Husky, lint-staged       |
 | CI         | GitHub Actions                             |
-| Containers | Docker (development)                       |
+| Containers | Docker (development + production)          |
 
 ## Quick start
 
@@ -85,7 +85,6 @@ config/        Static site config (no URLs)
 constants/     Route constants
 styles/        Global CSS and design tokens
 public/        Static assets
-docs/          Internal company documentation
 ```
 
 ## Environment variables
@@ -99,54 +98,45 @@ All absolute URLs use `getSiteUrl()` from [lib/site-url.ts](lib/site-url.ts). De
 
 ## Deployment
 
-### Production (Docker — compiled, no source in image)
+### Vercel (recommended)
 
-The production image uses a **multi-stage build** with Next.js `standalone` output. The final container contains only:
+1. Import this repository in Vercel (public repo or personal account).
+2. Set `NEXT_PUBLIC_SITE_URL=https://klugminds.ai` and `NEXT_PUBLIC_ALLOW_INDEXING=true`.
+3. Connect `klugminds.ai` DNS to Vercel.
 
-- Compiled `server.js` and minimal runtime `node_modules`
-- Static assets (`.next/static`, `public/`)
+### Production Docker
 
-It does **not** include TypeScript source, `docs/`, `.cursor/`, or dev dependencies. Nginx sits in front as a reverse proxy.
+Multi-stage build with Next.js `standalone` output. Final image contains compiled server and static assets only — no TypeScript source or dev dependencies. Nginx sits in front as a reverse proxy.
 
 ```bash
 docker compose -f docker-compose.prod.yml up --build
 ```
 
-Open [http://localhost:8080](http://localhost:8080) (nginx → Next.js).
+Open [http://localhost:8080](http://localhost:8080).
 
-Build production image only:
+| File                                               | Purpose                                     |
+| -------------------------------------------------- | ------------------------------------------- |
+| [Dockerfile.prod](Dockerfile.prod)                 | Multi-stage production build                |
+| [docker-compose.prod.yml](docker-compose.prod.yml) | nginx + app stack                           |
+| [nginx/nginx.conf](nginx/nginx.conf)               | Reverse proxy, rate limit, security headers |
+| [Dockerfile](Dockerfile)                           | Dev only — `npm run dev` with hot reload    |
 
-```bash
-docker build -f Dockerfile.prod \
-  --build-arg NEXT_PUBLIC_SITE_URL=https://klugminds.ai \
-  --build-arg NEXT_PUBLIC_ALLOW_INDEXING=true \
-  -t klugminds-site:prod .
-```
-
-| File                                               | Purpose                                      |
-| -------------------------------------------------- | -------------------------------------------- |
-| [Dockerfile.prod](Dockerfile.prod)                 | Multi-stage production build                 |
-| [docker-compose.prod.yml](docker-compose.prod.yml) | nginx + app stack                            |
-| [nginx/nginx.conf](nginx/nginx.conf)               | Reverse proxy, rate limit, security headers  |
-| [Dockerfile](Dockerfile)                           | **Dev only** — `npm run dev` with hot reload |
-
-### Hosted deployment
-
-1. Set production env vars (`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ALLOW_INDEXING=true`).
-2. `npm run build && npm run start`, or use your platform's Next.js integration (Vercel, etc.).
-3. CI runs lint, type-check, and build on every PR and push to `main`.
-
-**Note:** Browser JavaScript is always minified bundles — that is normal for any website. Production Docker ensures **server-side source** (`.ts`, `.tsx`, internal docs) is not shipped in the image.
-
-## Docker (development)
+### Docker (development)
 
 ```bash
 docker compose up
 ```
 
-## Documentation
+## Related repositories
 
-Internal references: [docs/](docs/) · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · AI context: [AGENTS.md](AGENTS.md)
+| Repository           | Visibility | Purpose                |
+| -------------------- | ---------- | ---------------------- |
+| `klugminds-site`     | Public     | This website           |
+| `klugminds-handbook` | Private    | Internal documentation |
+
+## Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md) · AI context: [AGENTS.md](AGENTS.md)
 
 ## License
 

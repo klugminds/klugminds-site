@@ -12,19 +12,18 @@ Lean setup for token-efficient agent sessions.
 
 ## Rules
 
-| Rule                | Scope                                                    |
-| ------------------- | -------------------------------------------------------- |
-| `project-core.mdc`  | Always — phase, limits, token discipline                 |
-| `docs-markdown.mdc` | `docs/**/*.md`                                           |
-| `website.mdc`       | `app/`, `apps/`, `src/`, `website/`, `web/` (when added) |
+| Rule               | Scope                                                     |
+| ------------------ | --------------------------------------------------------- |
+| `project-core.mdc` | Always — phase, limits, token discipline                  |
+| `website.mdc`      | `app/`, `components/`, `lib/`, `config/`, `styles/`, etc. |
 
 ## Token discipline
 
-- Do not instruct agents to read every README under `docs/`
 - Use AGENTS.md routing table for task-specific paths
-- PROJECT_MEMORY is compressed; expand via section READMEs on demand
+- Company docs and ADRs live in `klugminds-handbook` — do not load unless asked
+- PROJECT_MEMORY is compressed; expand via code READMEs on demand
 
 ## Related
 
-- [docs/ai/README.md](../docs/ai/README.md) — Klugminds AI strategy (product), not Cursor config
+- [klugminds-handbook → docs/ai](https://github.com/klugminds/klugminds-handbook/blob/main/docs/ai/README.md) — Klugminds AI strategy (product), not Cursor config
 - [CONTRIBUTING.md](../CONTRIBUTING.md) — human contribution workflow

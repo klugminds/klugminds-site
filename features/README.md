@@ -27,8 +27,8 @@ Feature-based modules group domain logic (auth, blog, CMS, dashboard, contact, a
 
 ## Related Documents
 
-- [../docs/product/README.md](../docs/product/README.md) — product requirements
-- [../docs/architecture/README.md](../docs/architecture/README.md) — system design
+- [klugminds-handbook → product](https://github.com/klugminds/klugminds-handbook/blob/main/docs/product/README.md) — product requirements
+- [klugminds-handbook → architecture](https://github.com/klugminds/klugminds-handbook/blob/main/docs/architecture/README.md) — system design
 
 ## Future Topics
 

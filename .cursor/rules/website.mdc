@@ -10,14 +10,14 @@ Apply when working under `app/`, `apps/`, `src/`, `website/`, or `web/` (whichev
 
 ## Before coding
 
-- Check `docs/decisions/` for accepted stack/hosting choices
-- Align with `docs/branding/` and `standards/`
+- Check `klugminds-handbook` → `docs/decisions/` for accepted stack/hosting choices
+- Align with `klugminds-handbook` → `docs/branding/` and `standards/`
 
 ## Practices
 
 - No secrets in source; use `.env.example` only
 - Accessible, performant defaults; match brand tokens when defined
-- Add/update runbook in `docs/runbooks/` before production deploy
+- Add/update runbook in `klugminds-handbook` → `docs/runbooks/` before production deploy
 
 ## Scope
 

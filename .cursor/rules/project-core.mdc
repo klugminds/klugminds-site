@@ -1,23 +1,22 @@
 ---
-description: Klugminds repo identity, phase, and token discipline
+description: Klugminds website repo identity, phase, and token discipline
 alwaysApply: true
 ---
 
-# Klugminds core
+# Klugminds website core
 
-**Repo:** private `klugminds-site` — Next.js website + `docs/`. **Phase:** website foundation.
+**Repo:** public `klugminds-site` — Next.js website only. **Handbook:** private `klugminds-handbook`. **Phase:** website foundation.
 
 ## Before acting
 
 1. Use [AGENTS.md](../../AGENTS.md) task routing
 2. URLs only via `lib/site-url.ts` — never hardcode domains in components
-3. Open **one** relevant doc section if needed
 - No secrets, credentials, or real `.env` values
 - Match existing tone and structure; minimal diff scope
-- New dirs need README with: Navigation, Purpose, Related Documents, Future Topics
-- Architectural choices → `docs/decisions/` using `templates/adr-template.md`
+- New dirs need README.md
+- Architectural choices → `klugminds-handbook` `docs/decisions/` (not this repo)
 
-## Doc edits
+## Scope
 
-- Prefer updating the target section only; avoid cross-cutting rewrites
-- Cross-link with relative paths; update CHANGELOG for notable changes
+- Website code, CI, Docker, and deployment config only
+- No internal docs, policies, or ADRs in this repository

@@ -30,7 +30,7 @@ The `app/` directory defines all routes and server-side metadata for the Klugmin
 
 - [../components/README.md](../components/README.md) — UI components
 - [../lib/site-url.ts](../lib/site-url.ts) — URL helpers
-- [../docs/engineering/README.md](../docs/engineering/README.md) — engineering practices
+- [klugminds-handbook → engineering](https://github.com/klugminds/klugminds-handbook/blob/main/docs/engineering/README.md) — engineering practices
 
 ## Future Topics
 

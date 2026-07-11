@@ -10,11 +10,6 @@ out
 .github
 .cursor
 .cursorignore
-docs
-policies
-standards
-templates
-scripts
 *.md
 .env
 .env.local

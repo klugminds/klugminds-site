@@ -4,30 +4,28 @@ Entry point for AI tools working in this repository. Keep context small — load
 
 ## Start here
 
-1. **[PROJECT_MEMORY.md](PROJECT_MEMORY.md)** — phase, rules, directory index, task routing (~1 min read)
+1. **[PROJECT_MEMORY.md](PROJECT_MEMORY.md)** — phase, rules, directory index (~1 min read)
 2. **`.cursor/rules/`** — auto-applied constraints (do not duplicate in chat)
 
 ## Token-efficient workflow
 
-| Task         | Read first                               | Read only if needed        |
-| ------------ | ---------------------------------------- | -------------------------- |
-| Any change   | `PROJECT_MEMORY.md`                      | —                          |
-| Docs edit    | `docs/<section>/README.md`               | Other sections             |
-| New decision | `templates/adr-template.md`              | `docs/decisions/README.md` |
-| Standards    | `standards/README.md`                    | Full `docs/` tree          |
-| Website work | `app/`, `components/`, `lib/site-url.ts` | `docs/branding/`           |
-| Security     | `SECURITY.md`                            | `docs/security/README.md`  |
+| Task         | Read first                               | Read only if needed                      |
+| ------------ | ---------------------------------------- | ---------------------------------------- |
+| Any change   | `PROJECT_MEMORY.md`                      | —                                        |
+| Website work | `app/`, `components/`, `lib/site-url.ts` | `config/site.ts`, `styles/globals.css`   |
+| Branding     | —                                        | `klugminds-handbook` → `docs/branding/`  |
+| ADRs / docs  | —                                        | `klugminds-handbook` → `docs/decisions/` |
+| Security     | `SECURITY.md`                            | `klugminds-handbook` → `docs/security/`  |
 
-**Do not** load every `docs/**/README.md` or traverse the full tree unless the user asks for a broad audit.
+**Do not** load handbook docs unless the user explicitly asks for company or policy context.
 
 ## Repository
 
-- **Private** monorepo: Next.js website + `docs/`
+- **Public** website: Next.js 15 app only
+- **Handbook:** [klugminds-handbook](https://github.com/klugminds/klugminds-handbook) (private, internal docs)
 - **Phase:** Website foundation — placeholder homepage live
-- **Split:** TBD; treat as single repo for now
 
 ## Human docs (on demand)
 
-- [README.md](README.md) — repo overview for humans
-- [docs/README.md](docs/README.md) — docs index
+- [README.md](README.md) — setup, scripts, deployment
 - [CONTRIBUTING.md](CONTRIBUTING.md) — PR/commit workflow

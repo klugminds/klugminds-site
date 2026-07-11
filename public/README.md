@@ -11,7 +11,7 @@ Static files served from the site root.
 
 ## Related Documents
 
-- [../docs/branding/README.md](../docs/branding/README.md)
+- [klugminds-handbook → branding](https://github.com/klugminds/klugminds-handbook/blob/main/docs/branding/README.md)
 - [../app/icon.tsx](../app/icon.tsx)
 
 ## Future Topics

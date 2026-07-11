@@ -12,7 +12,7 @@ Colors, spacing, typography, and radius are defined as CSS variables in `:root` 
 
 ## Related Documents
 
-- [../docs/branding/README.md](../docs/branding/README.md)
+- [klugminds-handbook → branding](https://github.com/klugminds/klugminds-handbook/blob/main/docs/branding/README.md)
 - [../components/README.md](../components/README.md)
 
 ## Future Topics

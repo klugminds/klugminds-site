@@ -4,13 +4,12 @@
 
 ## Type of Change
 
-- [ ] Documentation update
-- [ ] New ADR or architectural decision
-- [ ] Policy or governance change
-- [ ] Standard or convention update
-- [ ] Template addition or update
-- [ ] Script or tooling change
+- [ ] Feature (new page, component, or capability)
 - [ ] Bug fix
+- [ ] SEO or metadata
+- [ ] CI, Docker, or deployment
+- [ ] Documentation (README, repo docs only)
+- [ ] Chore (dependencies, tooling)
 - [ ] Other (describe below)
 
 ## Related Issues
@@ -27,12 +26,12 @@
 
 - [ ] I have read the [Contributing Guide](../CONTRIBUTING.md)
 - [ ] I have followed the [Code of Conduct](../CODE_OF_CONDUCT.md)
-- [ ] Documentation is clear, accurate, and free of placeholder text
+- [ ] `npm run lint`, `npm run type-check`, and `npm run build` pass locally
 - [ ] New directories include a README.md explaining their purpose
-- [ ] ADRs follow the format in [templates/adr-template.md](../templates/adr-template.md) (if applicable)
+- [ ] URLs use `lib/site-url.ts` — no hardcoded domains
 - [ ] [CHANGELOG.md](../CHANGELOG.md) updated under `[Unreleased]` (if notable)
 - [ ] No secrets, credentials, or sensitive data included
-- [ ] Cross-links use relative paths and resolve correctly
+- [ ] ADR linked from `klugminds-handbook` if this is a significant architectural change
 
 ## Additional Notes
 
