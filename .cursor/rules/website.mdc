@@ -1,0 +1,24 @@
+---
+description: Website implementation rules (when site code exists)
+globs: "{app,components,features,hooks,lib,services,types,utils,config,constants,styles}/**/*"
+alwaysApply: false
+---
+
+# Website code
+
+Apply when working under `app/`, `apps/`, `src/`, `website/`, or `web/` (whichever exists).
+
+## Before coding
+
+- Check `docs/decisions/` for accepted stack/hosting choices
+- Align with `docs/branding/` and `standards/`
+
+## Practices
+
+- No secrets in source; use `.env.example` only
+- Accessible, performant defaults; match brand tokens when defined
+- Add/update runbook in `docs/runbooks/` before production deploy
+
+## Scope
+
+Implement only what the user requested; do not expand into unrelated site sections.
