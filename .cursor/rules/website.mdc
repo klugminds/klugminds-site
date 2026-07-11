@@ -17,6 +17,7 @@ Apply when working under `app/`, `apps/`, `src/`, `website/`, or `web/` (whichev
 
 - No secrets in source; use `.env.example` only
 - Accessible, performant defaults; match brand tokens when defined
+- Security headers live in `lib/security-headers.ts` — update when adding third-party scripts
 - Add/update runbook in `klugminds-handbook` → `docs/runbooks/` before production deploy
 
 ## Scope

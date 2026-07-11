@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = 'https://klugminds.ai';
+const DEFAULT_SITE_URL = 'https://www.klugminds.ai';
 
 export function getSiteUrl(): string {
   const url = process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL;

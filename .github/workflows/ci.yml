@@ -31,5 +31,5 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: https://klugminds.ai
+          NEXT_PUBLIC_SITE_URL: https://www.klugminds.ai
           NEXT_PUBLIC_ALLOW_INDEXING: false

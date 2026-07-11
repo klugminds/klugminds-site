@@ -4,11 +4,12 @@ Shared utilities and helpers.
 
 ## Contents
 
-| File                       | Purpose                                             |
-| -------------------------- | --------------------------------------------------- |
-| [site-url.ts](site-url.ts) | `getSiteUrl()`, `absoluteUrl()` — single URL source |
-| [metadata.ts](metadata.ts) | `createMetadata()` for SEO                          |
-| [cn.ts](cn.ts)             | Tailwind class merge helper                         |
+| File                                       | Purpose                                             |
+| ------------------------------------------ | --------------------------------------------------- |
+| [site-url.ts](site-url.ts)                 | `getSiteUrl()`, `absoluteUrl()` — single URL source |
+| [security-headers.ts](security-headers.ts) | CSP and HTTP security headers                       |
+| [metadata.ts](metadata.ts)                 | `createMetadata()` for SEO                          |
+| [cn.ts](cn.ts)                             | Tailwind class merge helper                         |
 
 ## Related Documents
 

@@ -37,17 +37,34 @@ cp .env.example .env.local
 | `chore/`   | Tooling, CI, dependencies       |
 | `docs/`    | README and repo-level docs only |
 
-### 3. Quality Checks
+### 3. Quality checks (local)
+
+Pre-commit hooks run lint-staged on commit. For a full local check:
 
 ```bash
-npm run lint
-npm run type-check
-npm run build
+npm run lint && npm run type-check && npm run build
 ```
 
-Pre-commit hooks run lint-staged automatically.
+### 4. AI validation (optional, on demand)
 
-### 4. Commit Messages
+In Cursor chat, type `/` and choose:
+
+- `/validate` — standards + pentest
+- `/pentest` — security only
+- `/standards` — lint/types/build only
+
+Not required on every push. See [.cursor/commands/README.md](.cursor/commands/README.md).
+
+### 5. Commit identity
+
+All commits must use `Klugminds <admin@klugminds.com>`.
+
+```bash
+git config user.email "admin@klugminds.com"
+git config user.name "Klugminds"
+```
+
+### 6. Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -57,7 +74,7 @@ fix(seo): correct canonical URL in metadata
 chore(ci): bump Node to 24
 ```
 
-### 5. Pull Request
+### 7. Pull Request
 
 - Use [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md).
 - One concern per PR.

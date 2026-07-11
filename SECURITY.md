@@ -2,11 +2,11 @@
 
 ## Supported Versions
 
-This repository is in its foundation phase and contains documentation only. Security updates apply to the repository itself and any future code introduced here.
+This repository hosts the Klugminds public website. Security updates apply to the site, CI, and deployment configuration.
 
 | Version | Supported |
 | ------- | --------- |
-| 0.1.x   | Yes       |
+| 0.2.x   | Yes       |
 
 ## Reporting a Vulnerability
 
@@ -54,6 +54,18 @@ Out of scope:
 - **Review before pushing** — check diffs for accidental inclusion of sensitive data.
 - **Follow least privilege** — request only the access you need.
 - **Report incidents promptly** — if you suspect a compromise, contact security@klugminds.com immediately.
+- **Optional AI review** — `/validate`, `/pentest`, or `/standards` in Cursor chat when you want a review (see [.cursor/commands/README.md](.cursor/commands/README.md)).
+
+## HTTP Security Headers
+
+Production responses are configured in [lib/security-headers.ts](lib/security-headers.ts) and applied via [next.config.ts](next.config.ts):
+
+- Content-Security-Policy
+- Strict-Transport-Security (HSTS)
+- X-Frame-Options / frame-ancestors
+- X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- Cross-Origin-Resource-Policy, Cross-Origin-Opener-Policy
+- Restricted `Access-Control-Allow-Origin` (canonical origin only)
 
 ## Security Documentation
 

@@ -9,18 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Next.js 15 website foundation with placeholder homepage.
-- Reusable components: Navbar, Footer, Container, Section, Button, Logo, JsonLd.
-- Tailwind v4 design system with CSS variables.
-- SEO: metadata, Open Graph, Twitter Cards, sitemap, robots, manifest, JSON-LD.
-- GitHub Actions CI, Docker dev and prod setup, Husky + lint-staged.
-- AI-ready setup: `AGENTS.md`, `.cursor/rules/`, `.cursorignore`.
+- Content-Security-Policy and hardened HTTP headers (`lib/security-headers.ts`).
+- `npm run validate` — lint, type-check, format, build in one command.
+- Post-change validation prompt: `.cursor/prompts/validate-changes.md`.
 
 ### Changed
 
-- **Repository split:** internal docs moved to `klugminds-handbook`; this repo is website-only and public-ready.
-- Production Docker: multi-stage `Dockerfile.prod`, nginx reverse proxy, Next.js `standalone` output.
-- README and CONTRIBUTING focused on website development and Vercel deployment.
+- Canonical site URL default: `https://www.klugminds.ai`.
+- Production indexing auto-enabled on Vercel production deployments.
+- Restricted `Access-Control-Allow-Origin` to canonical origin.
 
 ## [0.1.0] - 2026-07-11
 

@@ -1,6 +1,6 @@
 # Klugminds Website
 
-**Public company website for [Klugminds](https://klugminds.ai).**
+**Public company website for [Klugminds](https://www.klugminds.ai).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -91,7 +91,7 @@ public/        Static assets
 
 | Variable                     | Default                          | Optional override           |
 | ---------------------------- | -------------------------------- | --------------------------- |
-| `NEXT_PUBLIC_SITE_URL`       | `https://klugminds.ai`           | Local or alternate site URL |
+| `NEXT_PUBLIC_SITE_URL`       | `https://www.klugminds.ai`       | Local or alternate site URL |
 | `NEXT_PUBLIC_ALLOW_INDEXING` | `true` only on Vercel production | Explicit `true` or `false`  |
 
 All absolute URLs use `getSiteUrl()` from [lib/site-url.ts](lib/site-url.ts). Vercel previews and local development remain non-indexable unless explicitly enabled.

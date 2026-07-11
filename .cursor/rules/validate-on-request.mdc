@@ -1,0 +1,17 @@
+---
+description: Run full validation only when the user asks in chat
+alwaysApply: true
+---
+
+# Validation on request only
+
+Do **not** run the full validation workflow (pentest, `validate-changes.md`, live header probes) on every edit or push.
+
+Run it **only** when the user:
+
+- Types a slash command: `/validate`, `/pentest`, or `/standards` (see `.cursor/commands/`)
+- Or explicitly asks in chat (validate, pentest, security review, coding standards check)
+
+When triggered, follow [.cursor/prompts/validate-changes.md](../prompts/validate-changes.md).
+
+Routine work: lint/type-check/build only if needed for the task — not the full checklist unless requested.

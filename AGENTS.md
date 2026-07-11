@@ -9,19 +9,22 @@ Entry point for AI tools working in this repository. Keep context small — load
 
 ## Token-efficient workflow
 
-| Task         | Read first                               | Read only if needed                      |
-| ------------ | ---------------------------------------- | ---------------------------------------- |
-| Any change   | `PROJECT_MEMORY.md`                      | —                                        |
-| Website work | `app/`, `components/`, `lib/site-url.ts` | `config/site.ts`, `styles/globals.css`   |
-| Branding     | —                                        | `klugminds-handbook` → `docs/branding/`  |
-| ADRs / docs  | —                                        | `klugminds-handbook` → `docs/decisions/` |
-| Security     | `SECURITY.md`                            | `klugminds-handbook` → `docs/security/`  |
+| Task                                      | Read first                                             | Read only if needed                      |
+| ----------------------------------------- | ------------------------------------------------------ | ---------------------------------------- |
+| Any change                                | `PROJECT_MEMORY.md`                                    | —                                        |
+| User runs `/validate` or asks to validate | `.cursor/commands/validate.md` → `validate-changes.md` | `SECURITY.md`                            |
+| Website work                              | `app/`, `components/`, `lib/site-url.ts`               | `config/site.ts`, `styles/globals.css`   |
+| Branding                                  | —                                                      | `klugminds-handbook` → `docs/branding/`  |
+| ADRs / docs                               | —                                                      | `klugminds-handbook` → `docs/decisions/` |
+| Security                                  | `SECURITY.md`                                          | `klugminds-handbook` → `docs/security/`  |
 
 **Do not** load handbook docs unless the user explicitly asks for company or policy context.
 
+**Do not** run the full validation/pentest workflow unless the user asks in chat (see `.cursor/prompts/README.md`).
+
 ## Repository
 
-- **Public** website: Next.js 15 app only
+- **Public** website: Next.js 16 app
 - **Handbook:** [klugminds-handbook](https://github.com/klugminds/klugminds-handbook) (private, internal docs)
 - **Phase:** Website foundation — placeholder homepage live
 
