@@ -1,16 +1,20 @@
 const CANONICAL_ORIGIN = 'https://www.klugminds.ai';
 
+/** Cloudflare Web Analytics (when enabled in Cloudflare dashboard). */
+const CLOUDFLARE_INSIGHTS_SCRIPT = 'https://static.cloudflareinsights.com';
+const CLOUDFLARE_INSIGHTS_CONNECT = 'https://cloudflareinsights.com';
+
 /**
  * Content-Security-Policy for the static marketing site.
  * 'unsafe-inline' for script/style is required by Next.js App Router output today.
  */
 export const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline' ${CLOUDFLARE_INSIGHTS_SCRIPT}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  "connect-src 'self'",
+  `connect-src 'self' ${CLOUDFLARE_INSIGHTS_CONNECT}`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -12,7 +12,7 @@ You are validating the Klugminds public website (`klugminds-site`) **because the
 
 - Stack: Next.js 16, React 19, TypeScript strict, Tailwind v4
 - Canonical URL: `https://www.klugminds.ai` via `src/lib/site-url.ts` only
-- Security headers: `src/lib/security-headers.ts` + `next.config.ts`
+- Security headers: `src/lib/security-headers.ts` + `next.config.ts` (includes Cloudflare Web Analytics when proxied)
 - Handbook (private): `klugminds-handbook` for ADRs/policies
 
 ### 1. Coding standards
