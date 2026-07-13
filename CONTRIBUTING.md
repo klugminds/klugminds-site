@@ -57,11 +57,9 @@ Not required on every push. See [.cursor/commands/README.md](.cursor/commands/RE
 
 ### 5. Commit identity
 
-All commits must use `Klugminds <admin@klugminds.com>`.
-
 ```bash
-git config user.email "admin@klugminds.com"
-git config user.name "Klugminds"
+git config user.email "{Email}"
+git config user.name "{username}"
 ```
 
 ### 6. Commit Messages
