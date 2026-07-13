@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Content-Security-Policy and hardened HTTP headers (`lib/security-headers.ts`).
+- Content-Security-Policy and hardened HTTP headers (`src/lib/security-headers.ts`).
 - `npm run validate` — lint, type-check, format, build in one command.
 - Post-change validation prompt: `.cursor/prompts/validate-changes.md`.
 
 ### Changed
 
-- Canonical site URL default: `https://www.klugminds.ai`.
+- Application code moved under `src/`; root reserved for tooling, Docker, CI, and AI config.
 - Production indexing auto-enabled on Vercel production deployments.
 - Restricted `Access-Control-Allow-Origin` to canonical origin.
 

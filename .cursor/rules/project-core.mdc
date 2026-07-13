@@ -10,7 +10,7 @@ alwaysApply: true
 ## Before acting
 
 1. Use [AGENTS.md](../../AGENTS.md) task routing
-2. URLs only via `lib/site-url.ts` — never hardcode domains in components
+2. URLs only via `src/lib/site-url.ts` — never hardcode domains in components
 - No secrets, credentials, or real `.env` values
 - Match existing tone and structure; minimal diff scope
 - New dirs need README.md

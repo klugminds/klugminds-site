@@ -1,12 +1,12 @@
 ---
 description: Website implementation rules (when site code exists)
-globs: "{app,components,features,hooks,lib,services,types,utils,config,constants,styles}/**/*"
+globs: "src/**/*"
 alwaysApply: false
 ---
 
 # Website code
 
-Apply when working under `app/`, `apps/`, `src/`, `website/`, or `web/` (whichever exists).
+Apply when working under `src/` (app, components, lib, config, styles, etc.).
 
 ## Before coding
 
@@ -17,7 +17,7 @@ Apply when working under `app/`, `apps/`, `src/`, `website/`, or `web/` (whichev
 
 - No secrets in source; use `.env.example` only
 - Accessible, performant defaults; match brand tokens when defined
-- Security headers live in `lib/security-headers.ts` — update when adding third-party scripts
+- Security headers live in `src/lib/security-headers.ts` — update when adding third-party scripts
 - Add/update runbook in `klugminds-handbook` → `docs/runbooks/` before production deploy
 
 ## Scope

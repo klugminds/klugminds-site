@@ -14,11 +14,11 @@ Lean setup for token-efficient agent sessions.
 
 ## Rules
 
-| Rule                      | Scope                                                     |
-| ------------------------- | --------------------------------------------------------- |
-| `project-core.mdc`        | Always — phase, limits, token discipline                  |
-| `validate-on-request.mdc` | Always — full validation only when user asks in chat      |
-| `website.mdc`             | `app/`, `components/`, `lib/`, `config/`, `styles/`, etc. |
+| Rule                      | Scope                                                |
+| ------------------------- | ---------------------------------------------------- |
+| `project-core.mdc`        | Always — phase, limits, token discipline             |
+| `validate-on-request.mdc` | Always — full validation only when user asks in chat |
+| `website.mdc`             | `src/**` — application code                          |
 
 ## Token discipline
 

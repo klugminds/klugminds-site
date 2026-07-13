@@ -28,7 +28,7 @@
 - [ ] I have followed the [Code of Conduct](../CODE_OF_CONDUCT.md)
 - [ ] `npm run lint`, `npm run type-check`, and `npm run build` pass locally
 - [ ] New directories include a README.md explaining their purpose
-- [ ] URLs use `lib/site-url.ts` — no hardcoded domains
+- [ ] URLs use `src/lib/site-url.ts` — no hardcoded domains
 - [ ] [CHANGELOG.md](../CHANGELOG.md) updated under `[Unreleased]` (if notable)
 - [ ] No secrets, credentials, or sensitive data included
 - [ ] ADR linked from `klugminds-handbook` if this is a significant architectural change

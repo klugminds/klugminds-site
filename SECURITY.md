@@ -58,7 +58,7 @@ Out of scope:
 
 ## HTTP Security Headers
 
-Production responses are configured in [lib/security-headers.ts](lib/security-headers.ts) and applied via [next.config.ts](next.config.ts):
+Production responses are configured in [src/lib/security-headers.ts](src/lib/security-headers.ts) and applied via [next.config.ts](next.config.ts):
 
 - Content-Security-Policy
 - Strict-Transport-Security (HSTS)

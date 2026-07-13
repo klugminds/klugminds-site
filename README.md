@@ -73,19 +73,18 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Project structure
 
 ```
-app/           Next.js App Router (routes, metadata, SEO)
-components/    Reusable UI (layout, ui, seo)
-features/      Feature modules (future: blog, auth, CMS)
-hooks/         Custom React hooks
-lib/           Utilities (site-url, metadata, cn)
-services/      API clients (future)
-types/         Shared TypeScript types
-utils/         General utilities
-config/        Static site config (no URLs)
-constants/     Route constants
-styles/        Global CSS and design tokens
+src/           Application code (see src/README.md)
+  app/         Next.js App Router
+  components/  Reusable UI
+  lib/         Utilities (site-url, metadata, security-headers)
+  …
 public/        Static assets
+Dockerfile*    Container builds (repo root)
+.github/       CI and issue templates
+.cursor/       AI rules and slash commands
 ```
+
+Root holds **tooling and config** only; all website code is under `src/`.
 
 ## Environment variables
 
@@ -94,7 +93,7 @@ public/        Static assets
 | `NEXT_PUBLIC_SITE_URL`       | `https://www.klugminds.ai`       | Local or alternate site URL |
 | `NEXT_PUBLIC_ALLOW_INDEXING` | `true` only on Vercel production | Explicit `true` or `false`  |
 
-All absolute URLs use `getSiteUrl()` from [lib/site-url.ts](lib/site-url.ts). Vercel previews and local development remain non-indexable unless explicitly enabled.
+All absolute URLs use `getSiteUrl()` from [src/lib/site-url.ts](src/lib/site-url.ts). Vercel previews and local development remain non-indexable unless explicitly enabled.
 
 ## Deployment
 
