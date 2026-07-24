@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Content-Security-Policy and hardened HTTP headers (`src/lib/security-headers.ts`).
+- Company legal details (GST registration) on homepage and footer.
 - `npm run validate` — lint, type-check, format, build in one command.
 - Post-change validation prompt: `.cursor/prompts/validate-changes.md`.
 

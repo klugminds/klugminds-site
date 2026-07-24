@@ -13,13 +13,14 @@ Next.js App Router — routes, layouts, and metadata.
 
 ## Purpose
 
-The `app/` directory defines all routes and server-side metadata for the Klugminds website. Only the homepage exists in this foundation phase.
+The `app/` directory defines all routes and server-side metadata for the Klugminds website.
 
 ## Routes
 
 | File                  | URL                     | Description                                 |
 | --------------------- | ----------------------- | ------------------------------------------- |
-| `page.tsx`            | `/`                     | Placeholder homepage                        |
+| `page.tsx`            | `/`                     | Homepage (company SEO + link to legal)      |
+| `legal/page.tsx`      | `/legal`                | Legal entity and GST registration details   |
 | `robots.ts`           | `/robots.txt`           | Crawler rules (noindex when not production) |
 | `sitemap.ts`          | `/sitemap.xml`          | Sitemap (homepage only)                     |
 | `manifest.ts`         | `/manifest.webmanifest` | PWA manifest                                |

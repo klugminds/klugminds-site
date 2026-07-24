@@ -1,12 +1,25 @@
+import type { Metadata } from 'next';
+
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
+import { ROUTES } from '@/constants/routes';
+import { createMetadata } from '@/lib/metadata';
+
+const pageTitle = siteConfig.name;
+const pageDescription = siteConfig.seoDescription;
+
+export const metadata: Metadata = createMetadata({
+  pathname: ROUTES.home,
+  title: pageTitle,
+  description: pageDescription,
+});
 
 export default function HomePage() {
   return (
     <>
-      <JsonLd pathname="/" />
+      <JsonLd pathname={ROUTES.home} pageTitle={pageTitle} pageDescription={pageDescription} />
       <Section>
         <Container>
           <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">

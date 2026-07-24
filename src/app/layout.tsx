@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
+import { siteConfig } from '@/config/site';
 import { createMetadata } from '@/lib/metadata';
 import '@/styles/globals.css';
 
@@ -12,7 +13,11 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-export const metadata: Metadata = createMetadata();
+export const metadata: Metadata = createMetadata({
+  pathname: '/',
+  title: siteConfig.name,
+  description: siteConfig.seoDescription,
+});
 
 export default function RootLayout({
   children,

@@ -13,10 +13,14 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   async headers() {
+    if (!isProduction) {
+      return [];
+    }
+
     return [
       {
         source: '/(.*)',
-        headers: [...securityHeaders, ...(isProduction ? [strictTransportSecurity] : [])],
+        headers: [...securityHeaders, strictTransportSecurity],
       },
     ];
   },
