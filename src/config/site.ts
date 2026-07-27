@@ -1,14 +1,15 @@
 export const siteConfig = {
   name: 'Klugminds',
-  tagline: 'Building the future with AI.',
-  description: 'Klugminds builds intelligent products and solutions. Official company website.',
+  tagline: 'AI systems that ship, scale, and stay reliable in production.',
+  description:
+    'Klugminds designs, builds, and operates production-grade machine learning for financial services, iGaming, e-commerce, logistics, and healthcare.',
   seoDescription:
-    'Official website of Klugminds, operated by KLUGMINDLABS PRIVATE LIMITED. AI products and intelligent solutions from India. GSTIN 37AANCK0145Q1ZZ.',
+    'Production-grade AI for regulated industries. Fraud, AML, iGaming integrity, and credit risk models with explainability, monitoring, and governance documentation. Global delivery from India.',
   alternateNames: ['Klugminds AI', 'Klugmindlabs', 'Klug Minds', 'KLUGMINDLABS'] as const,
   keywords: [
     'Klugminds',
     'Klugminds AI',
-    'klugminds.ai',
+    'klugminds.com',
     'KLUGMINDLABS',
     'KLUGMINDLABS PRIVATE LIMITED',
     'Klugmindlabs',
@@ -16,7 +17,21 @@ export const siteConfig = {
     'AI company India',
     '37AANCK0145Q1ZZ',
     'GSTIN 37AANCK0145Q1ZZ',
+    'AI engineering',
+    'data science',
+    'DevSecOps',
+    'fintech',
+    'AML',
+    'credit risk',
+    'iGaming',
+    'responsible gaming',
   ] as const,
-  statusMessage: 'Website under development.',
+  contactEmail: 'hello@klugminds.com',
+  careersEmail: 'careers@klugminds.com',
   locale: 'en',
+  founded: 2026,
+  locations: {
+    delivery: ['Bengaluru'] as const,
+    clients: ['Europe', 'United Arab Emirates', 'Canada', 'India'] as const,
+  },
 } as const;

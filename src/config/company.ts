@@ -6,6 +6,7 @@ export const companyConfig = {
   legalName: 'KLUGMINDLABS PRIVATE LIMITED',
   gstin: '37AANCK0145Q1ZZ',
   gstRegisteredFrom: '2026-07-23',
+  registeredOffice: 'Tirupati, Andhra Pradesh, India',
 } as const;
 
 export function formatGstRegistrationDate(): string {

@@ -23,6 +23,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 COPY --from=deps /app/node_modules ./node_modules
+# Source and public assets only; .dockerignore strips scripts, docs, nginx, caches.
 COPY . .
 
 RUN npm run build

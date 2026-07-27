@@ -16,12 +16,12 @@ export default function OpenGraphImage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#fafafa',
-        color: '#0f172a',
+        background: '#06172b',
+        color: '#f6fbff',
       }}
     >
       <div style={{ fontSize: 72, fontWeight: 700 }}>{siteConfig.name}</div>
-      <div style={{ fontSize: 32, marginTop: 16, color: '#64748b' }}>{siteConfig.tagline}</div>
+      <div style={{ fontSize: 32, marginTop: 16, color: '#9eb2c8' }}>{siteConfig.tagline}</div>
     </div>,
     { ...size },
   );

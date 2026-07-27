@@ -5,7 +5,7 @@ import { ROUTES } from '@/constants/routes';
 
 export function CompanyLegal() {
   return (
-    <p className="text-muted max-w-2xl text-center text-xs leading-relaxed sm:text-sm">
+    <p className="text-muted text-xs leading-relaxed sm:text-sm">
       <Link href={ROUTES.legal} className="hover:text-foreground transition-colors">
         GSTIN {companyConfig.gstin}
       </Link>

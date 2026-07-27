@@ -1,22 +1,90 @@
-# Production image — multi-stage build. Source is not included in the final layer.
-# Dev-only workflow uses Dockerfile + docker-compose.yml instead.
+# -----------------------------------------------------------------------------
+# Docker build context — keeps dev/repo files out of prod and dev image layers.
+# Dev compose still bind-mounts the repo; this mainly speeds COPY in Dockerfile*.
+# -----------------------------------------------------------------------------
 
-node_modules
-.next
-out
-.git
-.gitignore
-.husky
-.github
-.cursor
+# Dependencies and build output (reinstalled/built inside the image)
+node_modules/
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+
+# Git and CI
+.git/
+.gitattributes/
+.github/
+
+# Cursor / editor / hooks (not used at runtime)
+.cursor/
 .cursorignore
-*.md
+.husky/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment and secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+
+# Logs and caches
+logs/
+*.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+coverage/
+.nyc_output/
+
+# Python asset scripts (fetch/generate only — not imported by the app)
+scripts/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Documentation and repo meta (not needed in standalone output)
+*.md
+
+# Lint/format config (not used during next build)
+eslint.config.ts
+.prettierignore
+prettier.config.mjs
+.editorconfig
+
+# Docker and nginx (web image only; nginx service mounts its own config)
 Dockerfile
+Dockerfile.*
 docker-compose.yml
-docker-compose.prod.yml
-coverage
-.turbo
+docker-compose.*.yml
+.dockerignore
+nginx/
+
+# Local deploy targets
+.vercel/
+.netlify/
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+tmp/
+temp/
+*.tmp
+
+# Test artifacts
+playwright-report/
+test-results/
+blob-report/
+.playwright/

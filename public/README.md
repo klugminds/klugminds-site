@@ -1,21 +1,26 @@
-# Public assets
+# Static assets
 
-Static files served from the site root.
+## Images
 
-## Contents
+| Path                         | Usage                                      |
+| ---------------------------- | ------------------------------------------ |
+| `images/logo.png`            | Full wordmark — source for icon generation |
+| `images/logo-icon.png`       | Navbar mark (white + teal on transparent)  |
+| `images/logo-mark-color.png` | Colored mark (navy + teal on transparent)  |
+| `images/favicon.png`         | Primary favicon (512px app icon)           |
+| `images/icons/`              | Full favicon size set + app icon master    |
 
-| File                               | Purpose                                  |
-| ---------------------------------- | ---------------------------------------- |
-| [logo.svg](logo.svg)               | Logo placeholder                         |
-| `icon.tsx` / `opengraph-image.tsx` | Generated via [../src/app/](../src/app/) |
+Regenerate navbar icons: `python scripts/generate-icons.py`  
+Regenerate favicons: `python scripts/generate-favicons.py`
 
-## Related Documents
+Add new images in `src/config/images.ts` with `src`, `alt`, `width`, `height`, and `displayHeight`. Use the `SiteImage` component for consistent rendering via `next/image`.
 
-- [klugminds-handbook → branding](https://github.com/klugminds/klugminds-handbook/blob/main/docs/branding/README.md)
-- [../src/app/icon.tsx](../src/app/icon.tsx)
+## Partner logos
 
-## Future Topics
+Partner logos live in `images/partners/`. Regenerate from official sites:
 
-- Brand logo assets (SVG, PNG)
-- Favicon variants
-- Social preview images
+```bash
+python scripts/fetch-partner-logos.py
+```
+
+Partner metadata is configured in `src/config/content/home.ts`.
