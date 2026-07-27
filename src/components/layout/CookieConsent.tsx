@@ -1,26 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { readCookieConsent, writeCookieConsent } from '@/lib/cookie-consent';
 import { cn } from '@/lib/cn';
 
+function subscribeNoop() {
+  return () => {};
+}
+
 export function CookieConsent() {
-  const [visible, setVisible] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const dialogId = 'cookie-consent-dialog';
 
-  useEffect(() => {
-    setMounted(true);
-    setVisible(readCookieConsent() === null);
-  }, []);
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
+  const needsConsent = useSyncExternalStore(
+    subscribeNoop,
+    () => readCookieConsent() === null,
+    () => false,
+  );
+  const visible = mounted && needsConsent && !dismissed;
 
   const saveConsent = useCallback(() => {
     writeCookieConsent('essential');
-    setVisible(false);
+    setDismissed(true);
   }, []);
 
   useEffect(() => {
@@ -28,7 +38,9 @@ export function CookieConsent() {
       return;
     }
 
-    const acceptButton = document.querySelector<HTMLButtonElement>(`#${dialogId} [data-cookie-accept]`);
+    const acceptButton = document.querySelector<HTMLButtonElement>(
+      `#${dialogId} [data-cookie-accept]`,
+    );
     acceptButton?.focus();
 
     function onKeyDown(event: KeyboardEvent) {
@@ -73,14 +85,14 @@ export function CookieConsent() {
             optional analytics cookies at this time. Read our{' '}
             <Link
               href={ROUTES.cookies}
-              className="font-medium text-accent-on-light underline-offset-2 hover:underline"
+              className="text-accent-on-light font-medium underline-offset-2 hover:underline"
             >
               Cookie Policy
             </Link>{' '}
             and{' '}
             <Link
               href={ROUTES.privacy}
-              className="font-medium text-accent-on-light underline-offset-2 hover:underline"
+              className="text-accent-on-light font-medium underline-offset-2 hover:underline"
             >
               Privacy Policy
             </Link>
