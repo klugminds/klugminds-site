@@ -1,4 +1,11 @@
-import { SignalField } from '@/components/stage/SignalField';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+const SignalField = dynamic(
+  () => import('@/components/stage/SignalField').then((mod) => mod.SignalField),
+  { ssr: false },
+);
 
 type StageProps = {
   id?: string;

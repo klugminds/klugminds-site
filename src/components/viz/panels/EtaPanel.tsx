@@ -148,7 +148,7 @@ export function EtaPanel() {
         ))}
       </dl>
       <div className="viz-detail">
-        <h4>Widen the promise, or tighten the prediction</h4>
+        <p className="viz-detail-title">Widen the promise, or tighten the prediction</p>
         <p>
           The distribution is what your fleet actually does. Widening the window always keeps more
           promises — and costs you the customer&apos;s afternoon. Narrowing the distribution is the

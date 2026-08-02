@@ -2,13 +2,12 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono, Montserrat } from 'next/font/google';
 
 import { BackToTop } from '@/components/layout/BackToTop';
+import { DeferredLayoutExtras } from '@/components/layout/DeferredLayoutExtras';
 import { ScrollToTopOnNavigate } from '@/components/layout/ScrollToTopOnNavigate';
-import { CookieConsent } from '@/components/layout/CookieConsent';
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
 import { ScrollProgress } from '@/components/layout/ScrollProgress';
 import { MotionEffects } from '@/components/motion/MotionEffects';
-import { GlobalOverlays } from '@/components/overlays/GlobalOverlays';
 import { siteConfig } from '@/config/site';
 import { createMetadata } from '@/lib/metadata';
 import '@/styles/globals.css';
@@ -23,6 +22,7 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['500', '600', '700'],
   display: 'swap',
+  preload: false,
   variable: '--font-montserrat',
 });
 
@@ -30,6 +30,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   display: 'swap',
+  preload: false,
   variable: '--font-jetbrains-mono',
 });
 
@@ -73,9 +74,8 @@ export default function RootLayout({
         </main>
         <Footer />
         <BackToTop />
-        <GlobalOverlays />
+        <DeferredLayoutExtras />
         <MotionEffects />
-        <CookieConsent />
       </body>
     </html>
   );

@@ -147,7 +147,7 @@ export function RankingPanel() {
         ))}
       </dl>
       <div className="viz-detail">
-        <h4>{detail.title}</h4>
+        <p className="viz-detail-title">{detail.title}</p>
         <p>{detail.text}</p>
       </div>
       <figcaption className="sr-only">

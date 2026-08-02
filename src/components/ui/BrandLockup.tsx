@@ -29,7 +29,7 @@ export function BrandLockup({ variant }: BrandLockupProps) {
   };
 
   return (
-    <Link className={chipClass} href={ROUTES.home} aria-label="Klugminds home" onClick={scrollHome}>
+    <Link className={chipClass} href={ROUTES.home} onClick={scrollHome}>
       <span className={innerClass}>
         <BrandMark />
         <span className="flex flex-col gap-1">
