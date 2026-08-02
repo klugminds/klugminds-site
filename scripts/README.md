@@ -6,8 +6,16 @@ Generate Klugminds navbar icon assets from the brand mark reference.
 
 ```bash
 python scripts/generate-icons.py
-python scripts/generate-favicons.py
+node scripts/generate-favicons.mjs
 ```
+
+`generate-favicons.py` is a thin wrapper that calls the Node script above. One-time deps:
+
+```bash
+npm install --no-save @resvg/resvg-js sharp
+```
+
+**Source:** `public/images/brand/favicon.svg`
 
 ## Outputs (`generate-icons.py`)
 

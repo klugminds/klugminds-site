@@ -10,31 +10,34 @@ type MailtoOptions = {
 const br = '\r\n';
 
 const BRIEFING_BODY = [
-  'Hello,',
+  'Hello Klugminds team,',
   '',
-  'I would like to schedule a briefing with the Klugminds team.',
+  'I would like to schedule a briefing call with a senior engineer on your team.',
   '',
   'Name:',
   'Company:',
   'Role / title:',
-  'Industry / use case:',
-  'Preferred timeline:',
+  'Topic / use case:',
+  'Engagement stage:',
+  'Desired outcome:',
+  'Preferred start:',
   '',
-  'Thank you,',
+  'Kind regards,',
   '',
 ].join(br);
 
 const ENQUIRY_BODY = [
-  'Hello,',
+  'Hello Klugminds team,',
   '',
   'I would like to get in touch regarding a potential engagement.',
   '',
   'Name:',
   'Company:',
   'Role / title:',
-  'Brief overview:',
+  'Topic:',
+  'Message:',
   '',
-  'Thank you,',
+  'Kind regards,',
   '',
 ].join(br);
 
@@ -68,7 +71,11 @@ const FIELD_NOTES_BODY = [
  * Uses encodeURIComponent (%20) instead of URLSearchParams (+) so Outlook
  * renders spaces correctly in the subject and body.
  */
-export function buildMailto({ to = siteConfig.contactEmail, subject, body }: MailtoOptions): string {
+export function buildMailto({
+  to = siteConfig.contactEmail,
+  subject,
+  body,
+}: MailtoOptions): string {
   const query: string[] = [];
 
   if (subject) {

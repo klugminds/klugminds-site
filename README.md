@@ -6,15 +6,15 @@
 
 ## About
 
-Next.js 15 company website — placeholder homepage today, foundation for blog, auth, CMS, and dashboard features. Internal company documentation lives in the private [klugminds-handbook](https://github.com/klugminds/klugminds-handbook) repository.
+Next.js 16 marketing site — solutions, services, industries, insights, careers, contact, and legal pages. Internal company documentation lives in the private [klugminds-handbook](https://github.com/klugminds/klugminds-handbook) repository.
 
 ## Technology stack
 
 | Layer      | Technology                                 |
 | ---------- | ------------------------------------------ |
-| Framework  | Next.js 15 (App Router)                    |
+| Framework  | Next.js 16 (App Router)                    |
 | UI         | React 19                                   |
-| Language   | TypeScript (strict)                        |
+| Language   | TypeScript 6 (strict)                      |
 | Styling    | Tailwind CSS v4 (CSS variables + `@theme`) |
 | Quality    | ESLint, Prettier, Husky, lint-staged       |
 | CI         | GitHub Actions                             |

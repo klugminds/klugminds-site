@@ -26,7 +26,7 @@ Entry point for AI tools working in this repository. Keep context small — load
 
 - **Public** website: Next.js 16 app
 - **Handbook:** [klugminds-handbook](https://github.com/klugminds/klugminds-handbook) (private, internal docs)
-- **Phase:** Website foundation — placeholder homepage live
+- **Phase:** Website foundation — V4 marketing site (solutions, services, industries, legal, overlays, viz panels)
 
 ## Human docs (on demand)
 

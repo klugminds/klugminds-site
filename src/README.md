@@ -7,7 +7,7 @@ Application code for the Klugminds website.
 | Directory                  | Purpose                                    |
 | -------------------------- | ------------------------------------------ |
 | [app/](app/)               | Next.js App Router (routes, metadata, SEO) |
-| [components/](components/) | Reusable UI (layout, ui, seo)              |
+| [components/](components/) | UI (layout, motion, viz, overlays, detail) |
 | [features/](features/)     | Feature modules (future)                   |
 | [hooks/](hooks/)           | Custom React hooks                         |
 | [lib/](lib/)               | Utilities (site-url, metadata, cn)         |

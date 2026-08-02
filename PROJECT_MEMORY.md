@@ -8,8 +8,8 @@
 | -------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Repo     | `klugminds-site` (public)                                                                                                   |
 | Handbook | `klugminds-handbook` (private) — [github.com/klugminds/klugminds-handbook](https://github.com/klugminds/klugminds-handbook) |
-| Phase    | **Website foundation** — Next.js 16 app + placeholder homepage                                                              |
-| Stack    | Next 16, React 19, TS strict, Tailwind v4                                                                                   |
+| Phase    | **Website foundation** — V4 marketing site live (28 static routes)                                                          |
+| Stack    | Next 16, React 19, TypeScript 6 strict, Tailwind v4, V4 motion/viz layer                                                    |
 | URL      | `NEXT_PUBLIC_SITE_URL` via [src/lib/site-url.ts](src/lib/site-url.ts) — never hardcode elsewhere                            |
 
 ## Agent rules (summary)
@@ -23,7 +23,9 @@
 
 ## Website paths
 
-`src/app/` · `src/components/` · `src/features/` · `src/lib/` · `src/config/` · `src/styles/` · `public/`
+`src/app/` · `src/components/` · `src/lib/` · `src/config/` · `src/styles/` · `public/`
+
+Route constants: [src/constants/routes.ts](src/constants/routes.ts). Redirects: `/products` → `/solutions`, `/blog` → `/insights`.
 
 ## Open decisions
 

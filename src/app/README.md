@@ -4,12 +4,13 @@ Next.js App Router — routes, layouts, and metadata.
 
 ## Navigation
 
-| Item            | Path                                     |
-| --------------- | ---------------------------------------- |
-| Homepage        | [page.tsx](page.tsx)                     |
-| Root layout     | [layout.tsx](layout.tsx)                 |
-| Site config     | [../config/site.ts](../config/site.ts)   |
-| Metadata helper | [../lib/metadata.ts](../lib/metadata.ts) |
+| Item            | Path                                             |
+| --------------- | ------------------------------------------------ |
+| Homepage        | [page.tsx](page.tsx)                             |
+| Root layout     | [layout.tsx](layout.tsx)                         |
+| Site config     | [../config/site.ts](../config/site.ts)           |
+| Metadata helper | [../lib/metadata.ts](../lib/metadata.ts)         |
+| Route constants | [../constants/routes.ts](../constants/routes.ts) |
 
 ## Purpose
 
@@ -17,17 +18,29 @@ The `app/` directory defines all routes and server-side metadata for the Klugmin
 
 ## Routes
 
-| File                  | URL                     | Description                                 |
-| --------------------- | ----------------------- | ------------------------------------------- |
-| `page.tsx`            | `/`                     | Homepage (company SEO + link to legal)      |
-| `legal/page.tsx`      | `/legal`                | Legal entity and GST registration details   |
-| `privacy/page.tsx`    | `/privacy`              | Privacy policy                              |
-| `cookies/page.tsx`    | `/cookies`              | Cookie policy and cookie inventory          |
-| `robots.ts`           | `/robots.txt`           | Crawler rules (noindex when not production) |
-| `sitemap.ts`          | `/sitemap.xml`          | Sitemap (homepage only)                     |
-| `manifest.ts`         | `/manifest.webmanifest` | PWA manifest                                |
-| `icon.tsx`            | `/icon`                 | Favicon (generated)                         |
-| `opengraph-image.tsx` | `/opengraph-image`      | OG image (generated)                        |
+| Path                    | File                         | Description                                 |
+| ----------------------- | ---------------------------- | ------------------------------------------- |
+| `/`                     | `page.tsx`                   | Homepage                                    |
+| `/solutions`            | `solutions/page.tsx`         | Solutions hub                               |
+| `/solutions/[slug]`     | `solutions/[slug]/page.tsx`  | Solution detail (4 slugs)                   |
+| `/services`             | `services/page.tsx`          | Services hub                                |
+| `/services/[slug]`      | `services/[slug]/page.tsx`   | Service detail (4 slugs)                    |
+| `/industries`           | `industries/page.tsx`        | Industries + hash anchors                   |
+| `/approach`             | `approach/page.tsx`          | Delivery approach                           |
+| `/insights`             | `insights/page.tsx`          | Field notes                                 |
+| `/about`                | `about/page.tsx`             | About                                       |
+| `/careers`              | `careers/page.tsx`           | Careers                                     |
+| `/contact`              | `contact/page.tsx`           | Contact + briefing                          |
+| `/legal`                | `legal/page.tsx`             | Legal entity & GST                          |
+| `/privacy`              | `privacy/page.tsx`           | Privacy policy                              |
+| `/cookies`              | `cookies/page.tsx`           | Cookie policy                               |
+| `/robots.txt`           | `robots.ts`                  | Crawler rules (noindex when not production) |
+| `/sitemap.xml`          | `sitemap.ts`                 | All marketing routes                        |
+| `/manifest.webmanifest` | `manifest.ts`                | PWA manifest                                |
+| `/icon`, `/apple-icon`  | `icon.png`, `apple-icon.png` | Favicons                                    |
+| `/opengraph-image.jpg`  | `opengraph-image.jpg`        | OG image                                    |
+
+Redirects (see [next.config.ts](../../next.config.ts)): `/products` → `/solutions`, `/blog` → `/insights`.
 
 ## Related Documents
 
@@ -37,6 +50,5 @@ The `app/` directory defines all routes and server-side metadata for the Klugmin
 
 ## Future Topics
 
-- Additional marketing pages (`/about`, `/contact`)
-- Blog routes under `app/blog/`
 - API routes under `app/api/` when needed
+- CMS integration (decision in handbook)

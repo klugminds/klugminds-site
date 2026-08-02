@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Klugminds">
+  <defs>
+    <linearGradient id="fv-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#123a7a"/><stop offset="1" stop-color="#081f4a"/>
+    </linearGradient>
+    <linearGradient id="fv-orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fd8b2c"/><stop offset="1" stop-color="#ef5f10"/>
+    </linearGradient>
+    <linearGradient id="fv-teal" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#66d4dc"/><stop offset="1" stop-color="#17a3ae"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#fv-bg)"/>
+  <g transform="translate(74 115) scale(0.985)">
+    <path d="M266 0 L324 121 L247 32 Z" fill="#ffffff" opacity=".8"/>
+    <path d="M247 32 L324 121 L221 77 Z" fill="url(#fv-orange)"/>
+    <path d="M156 0 L269 0 L98.1 274.4 A14 14 0 0 1 86.2 281 L30.3 281 A24 24 0 0 1 9.7 244.7 Z" fill="#ffffff"/>
+    <path d="M221 127 L371 204 L260 204 Z" fill="url(#fv-teal)"/>
+    <path d="M260 204 L371 204 L221 280 Z" fill="#0f95a4"/>
+  </g>
+</svg>
