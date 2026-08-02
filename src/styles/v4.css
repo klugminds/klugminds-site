@@ -1,0 +1,3131 @@
+/* ==================================================================
+   Klugminds V4 — the presentation layer.
+
+   V3 built an instrument: 39 operable panels on a light-first site with
+   a strict colour grammar. V4 does not touch that grammar. It adds the
+   layer a Fortune-100 site has and V3 did not — a stage to arrive on,
+   motion that reports scroll position, chrome that responds to the
+   pointer, product demos that play, and two real forms.
+
+   Rules kept from V1–V3, without exception:
+   - Navy is structure, teal is action, orange is attention. Inside a
+     plot orange still means exactly one thing. Everything warm added
+     here is chrome — rim light, rails, progress — never a mark.
+   - Every ambient loop is >= 6s and stops under prefers-reduced-motion.
+   - Nothing here is required to read the page. The stage, the demos,
+     the palette, and the wizard all degrade to plain markup with no JS.
+
+   Namespacing: new components are `v4-*`, new behaviours are attribute
+   hooks (`data-kinetic`, `data-tilt`, `data-magnet`) so a V3 component
+   can opt in without being rewritten.
+   ================================================================== */
+
+:root {
+  /* Deeper structural navies for the stage. Same hue family as the
+     logo's ribbon, taken two steps darker so the hero reads as a lit
+     room rather than a blue rectangle. */
+  --ink: #040d21;
+  --ink-2: #061530;
+  --ink-3: #0a2350;
+
+  /* One easing for everything that moves under a pointer, one for
+     everything that arrives on scroll. Two curves, whole site. */
+  --e-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --e-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --v4-teal: #33b8c4;
+  --v4-teal-hi: #66cbd5;
+  --v4-flame: #f4711a;
+  --v4-flame-hi: #fb923c;
+
+  --v4-shell: min(80rem, 100%);
+}
+
+/* ==================================================================
+   1 · GLOBAL CHROME
+   ================================================================== */
+
+/* ---- Scroll progress. Teal fills, orange leads the edge, so the
+        thing telling you where you are obeys the same grammar as the
+        thing telling you where to look. ---- */
+.v4-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--v4-teal-hi), var(--v4-teal) 62%, var(--v4-flame));
+  transform: scaleX(var(--p, 0));
+  transform-origin: 0 50%;
+  will-change: transform;
+  box-shadow: 0 0 18px rgb(0 165 179 / 0.5);
+}
+.v4-progress::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--v4-flame-hi);
+  box-shadow: 0 0 12px 2px rgb(244 113 26 / 0.8);
+  opacity: calc(var(--p, 0) * 1.6);
+}
+
+/* ---- The pointer companion is removed.
+
+        It drew a 6px dot that led the pointer and a 30px ring that lagged it.
+        Every selectable mark on this site already grows a ring on hover, and a
+        second ring chasing the cursor competed with the thing being pointed
+        at. The markup and the JS module went with these rules. ---- */
+
+/* ---- Film grain. 3% noise over the dark bands. It is the difference
+        between "a navy div" and "a printed navy surface". ---- */
+.v4-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Reading rail: a hairline that grows down the left of long
+        editorial sections as you pass them. ---- */
+.v4-edge-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 7rem;
+  pointer-events: none;
+  z-index: 1;
+}
+.v4-edge-fade--b {
+  bottom: 0;
+  background: linear-gradient(to top, var(--ink), transparent);
+}
+.v4-edge-fade--t {
+  top: 0;
+  background: linear-gradient(to bottom, var(--ink), transparent);
+}
+
+/* ==================================================================
+   2 · KINETIC TYPE
+
+   `data-kinetic` on a heading: JS wraps each word in `.v4-kw > span`
+   and the inner span rises out of an overflow-hidden box. Words arrive
+   in reading order, 45ms apart, capped so a 14-word headline does not
+   take a second to assemble. Without JS the heading is just a heading.
+   ================================================================== */
+.v4-kw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.v4-kw > span {
+  display: inline-block;
+  transform: translateY(105%) rotate(2.5deg);
+  opacity: 0;
+  transition:
+    transform 0.82s var(--e-out),
+    opacity 0.6s ease;
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+.v4-kin-in .v4-kw > span {
+  transform: none;
+  opacity: 1;
+}
+/* Server-rendered kinetic markup must stay readable without JS. */
+html:not(.js) .v4-kw > span {
+  transform: none;
+  opacity: 1;
+}
+html:not(.js) .v4-underline::after {
+  transform: scaleX(1);
+}
+
+/* A word can be marked as the one the sentence turns on. */
+.v4-lit {
+  position: relative;
+  color: #fff;
+  background: linear-gradient(100deg, var(--v4-teal-hi), #fff 42%, var(--v4-flame-hi));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Underscore that draws itself in once the word has landed. */
+.v4-underline {
+  position: relative;
+  white-space: nowrap;
+}
+.v4-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.12em;
+  height: 0.09em;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--v4-teal), var(--v4-flame));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1s var(--e-out) 0.55s;
+}
+.v4-kin-in .v4-underline::after {
+  transform: scaleX(1);
+}
+
+/* ==================================================================
+   3 · THE STAGE — hero surface
+
+   A lit room: an animated gradient aurora at the back, a canvas signal
+   field over it (js/v4.js), the woven grid V3 already uses, grain, and
+   a fade into whatever band follows. Content sits at z-index 2.
+   ================================================================== */
+.v4-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--ink);
+  --fg: #f6fbff;
+  --muted: #cbd5e1;
+  --line: rgb(255 255 255 / 0.12);
+  --accent-c: #33b8c4;
+  --card-bg: rgb(255 255 255 / 0.045);
+  --chip-bg: rgb(255 255 255 / 0.06);
+  color: var(--fg);
+}
+.v4-stage > .v4-shell {
+  position: relative;
+  z-index: 2;
+}
+
+/* Aurora: three drifting radial pools. 34s, 41s, 29s — coprime enough
+   that the composite never visibly repeats. */
+.v4-aurora {
+  position: absolute;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(38px);
+  opacity: 0.85;
+}
+.v4-aurora i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+.v4-aurora i:nth-child(1) {
+  width: 52%;
+  height: 58%;
+  left: -6%;
+  top: 2%;
+  background: radial-gradient(circle at 50% 50%, rgb(0 165 179 / 0.38), transparent 66%);
+  animation: v4-drift-a 34s ease-in-out infinite;
+}
+.v4-aurora i:nth-child(2) {
+  width: 46%;
+  height: 52%;
+  right: -4%;
+  top: -8%;
+  background: radial-gradient(circle at 50% 50%, rgb(244 113 26 / 0.26), transparent 66%);
+  animation: v4-drift-b 41s ease-in-out infinite;
+}
+.v4-aurora i:nth-child(3) {
+  width: 62%;
+  height: 46%;
+  left: 22%;
+  bottom: -18%;
+  background: radial-gradient(circle at 50% 50%, rgb(29 63 128 / 0.55), transparent 68%);
+  animation: v4-drift-c 29s ease-in-out infinite;
+}
+@keyframes v4-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(9%, 6%, 0) scale(1.14);
+  }
+}
+@keyframes v4-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.06);
+  }
+  50% {
+    transform: translate3d(-8%, 9%, 0) scale(0.92);
+  }
+}
+@keyframes v4-drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-6%, -7%, 0) scale(1.12);
+  }
+}
+
+/* The canvas signal field. Nodes and links, drawn at devicePixelRatio,
+   with the pointer pushing them apart. aria-hidden, no pointer events. */
+.v4-net {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.62;
+  -webkit-mask-image: radial-gradient(ellipse 92% 88% at 62% 42%, #000 22%, transparent 92%);
+  mask-image: radial-gradient(ellipse 92% 88% at 62% 42%, #000 22%, transparent 92%);
+}
+.v4-net canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Shell — the one width used by every V4 band. */
+.v4-shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .v4-shell {
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .v4-shell {
+    padding-inline: 2rem;
+  }
+}
+
+/* Eyebrow with a live dot — the site says it is running. */
+.v4-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v4-teal-hi);
+  padding: 0.375rem 0.75rem 0.375rem 0.5rem;
+  border: 1px solid rgb(102 203 213 / 0.28);
+  border-radius: 999px;
+  background: rgb(0 165 179 / 0.08);
+  backdrop-filter: blur(4px);
+}
+.v4-eyebrow b {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 999px;
+  background: var(--v4-flame);
+  box-shadow: 0 0 0 0 rgb(244 113 26 / 0.6);
+  animation: v4-ping 6.4s ease-out infinite;
+}
+@keyframes v4-ping {
+  0%,
+  70%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(244 113 26 / 0.55);
+  }
+  85% {
+    box-shadow: 0 0 0 7px rgb(244 113 26 / 0);
+  }
+}
+
+/* ---- Buttons. V3's btn-glow stays; these add the shapes V3 lacked. ---- */
+.v4-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.8125rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.3s var(--e-out),
+    box-shadow 0.3s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+.v4-btn > * {
+  position: relative;
+  z-index: 1;
+}
+.v4-btn:active {
+  transform: translateY(1px);
+}
+
+.v4-btn--primary {
+  background: #007a85;
+  border-color: #007a85;
+  color: #fff;
+  box-shadow:
+    0 0 0 0 rgb(0 122 133 / 0.45),
+    0 10px 30px -10px rgb(0 122 133 / 0.7);
+}
+/* The wash sweeps to orange on hover: action becoming attention. */
+.v4-btn--primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(105deg, #00919e, #007a85 46%, var(--v4-flame) 140%);
+  transform: translateX(-101%);
+  transition: transform 0.55s var(--e-out);
+}
+.v4-btn--primary:hover::before {
+  transform: none;
+}
+.v4-btn--primary:hover {
+  box-shadow:
+    0 0 0 4px rgb(0 122 133 / 0.16),
+    0 16px 40px -12px rgb(0 122 133 / 0.8);
+}
+
+.v4-btn--ghost {
+  border-color: rgb(255 255 255 / 0.26);
+  color: var(--fg);
+  background: rgb(255 255 255 / 0.03);
+  backdrop-filter: blur(4px);
+}
+.v4-btn--ghost:hover {
+  border-color: rgb(102 203 213 / 0.6);
+  background: rgb(102 203 213 / 0.1);
+}
+.section-white .v4-btn--ghost,
+.section-light .v4-btn--ghost {
+  border-color: #cbd5e1;
+  color: #0d2c65;
+  background: #fff;
+}
+.section-white .v4-btn--ghost:hover,
+.section-light .v4-btn--ghost:hover {
+  border-color: #007a85;
+  background: #f1f6fa;
+}
+
+/* The wizard's Back button sits on a light panel now. */
+.v4-wiz .v4-btn--ghost {
+  border-color: #cbd5e1;
+  color: #0d2c65;
+  background: #ffffff;
+}
+.v4-wiz .v4-btn--ghost:hover {
+  border-color: #007a85;
+  background: #f1f6fa;
+}
+
+.v4-btn--play {
+  gap: 0.625rem;
+  padding-left: 0.5rem;
+  background: rgb(255 255 255 / 0.06);
+  border-color: rgb(255 255 255 / 0.2);
+  color: #fff;
+}
+.v4-btn--play i {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--v4-flame);
+  box-shadow: 0 0 20px rgb(244 113 26 / 0.55);
+  flex: none;
+}
+.v4-btn--play:hover {
+  border-color: rgb(251 146 60 / 0.55);
+  background: rgb(244 113 26 / 0.12);
+}
+
+/* Magnetic pull — JS sets --dx/--dy from pointer offset. */
+[data-magnet] {
+  transform: translate3d(var(--dx, 0), var(--dy, 0), 0);
+}
+
+/* Arrow that steps forward on hover. */
+.v4-arrow {
+  display: inline-block;
+  transition: transform 0.3s var(--e-out);
+}
+a:hover .v4-arrow,
+button:hover .v4-arrow {
+  transform: translateX(4px);
+}
+
+/* A band marked `.v4-calm` runs no ambient loop. Used on every closing
+   "talk to the engineer" band: it is the last thing on the page and the one
+   asking for a decision, so the aurora, the spinning rim and the eyebrow
+   ping are all switched off there. Pointer-driven motion stays — that is a
+   response, not a loop. */
+.v4-calm .v4-aurora,
+.v4-calm .v4-beam::before {
+  animation: none;
+}
+.v4-calm .v4-eyebrow b {
+  animation: none;
+  box-shadow: 0 0 0 3px rgb(244 113 26 / 0.18);
+}
+
+/* ==================================================================
+   4 · (removed) TICKER
+
+   The synthesised decision strip that sat under the home headline. Removed
+   with its markup and its generator.
+   ================================================================== */
+
+/* ==================================================================
+   5 · CAPABILITY CHIPS
+
+   Was a marquee: two rows scrolling in opposite directions. Eighteen
+   capabilities is a list, and a list that moves cannot be read — you wait
+   for the item you want to come round again. The chip itself survived the
+   change; the tracks and the animation did not.
+   ================================================================== */
+.v4-mq-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--fg);
+  white-space: nowrap;
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s var(--e-out),
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.v4-mq-item:hover {
+  border-color: #007a85;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -8px rgb(13 44 101 / 0.3);
+}
+.v4-mq-item svg {
+  color: var(--accent-c);
+  flex: none;
+}
+
+/* ==================================================================
+   6 · SURFACES — tilt, spotlight, beam, glass
+   ================================================================== */
+
+/* 3D tilt. JS writes --rx/--ry; CSS owns the rest so the transform is
+   composited and never touches layout. */
+[data-tilt] {
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+  transition: transform 0.5s var(--e-out);
+}
+[data-tilt].is-tilting {
+  transition: transform 0.12s linear;
+}
+[data-tilt] .v4-lift {
+  transform: translateZ(28px);
+}
+
+/* Spotlight that follows the pointer inside a card. */
+.v4-spot {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.v4-spot::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    rgb(0 165 179 / 0.16),
+    transparent 62%
+  );
+}
+.v4-spot:hover::before {
+  opacity: 1;
+}
+.v4-spot > * {
+  position: relative;
+  z-index: 1;
+}
+.section-dark .v4-spot::before,
+.v4-stage .v4-spot::before {
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    rgb(102 203 213 / 0.14),
+    transparent 62%
+  );
+}
+
+/* A static warm-to-cool rim, for the one card per page that must be looked
+   at. It replaced `.v4-beam` on the closing band: a conic gradient spinning
+   every nine seconds behind a card that is asking for a decision reads as
+   agitation rather than as emphasis. `.v4-beam` is kept below for anything
+   that genuinely wants a moving edge; nothing currently uses it. */
+.v4-rim {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1.25rem;
+}
+.v4-rim::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    128deg,
+    rgb(102 203 213 / 0.55),
+    rgb(255 255 255 / 0.08) 42%,
+    rgb(244 113 26 / 0.5)
+  );
+}
+
+/* Conic beam border, no longer used on any page. */
+.v4-beam {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1.25rem;
+}
+.v4-beam::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--a, 0deg),
+    transparent 0deg,
+    var(--v4-teal) 40deg,
+    var(--v4-flame) 90deg,
+    transparent 150deg,
+    transparent 180deg,
+    var(--v4-teal) 220deg,
+    var(--v4-flame) 270deg,
+    transparent 330deg
+  );
+  animation: v4-spin 9s linear infinite;
+  opacity: 0.75;
+}
+@property --a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes v4-spin {
+  to {
+    --a: 360deg;
+  }
+}
+
+.v4-glass {
+  border: 1px solid rgb(255 255 255 / 0.13);
+  border-radius: 1.125rem;
+  background: linear-gradient(165deg, rgb(255 255 255 / 0.075), rgb(255 255 255 / 0.025));
+  backdrop-filter: blur(12px) saturate(130%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 22px 50px -22px rgb(2 8 22 / 0.8);
+}
+
+/* A card that lifts and warms its rim. Used across the light bands. */
+.v4-card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--card-bg);
+  overflow: hidden;
+  transition:
+    transform 0.38s var(--e-out),
+    box-shadow 0.38s var(--e-out),
+    border-color 0.3s ease;
+}
+.v4-card::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(0 165 179 / 0.5) 30%,
+    rgb(244 113 26 / 0.5) 76%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.v4-card:hover {
+  transform: translateY(-4px);
+  border-color: rgb(0 165 179 / 0.35);
+  box-shadow:
+    0 1px 2px rgb(13 44 101 / 0.05),
+    0 26px 54px -20px rgb(13 44 101 / 0.3);
+}
+.v4-card:hover::after {
+  opacity: 1;
+}
+.section-dark .v4-card:hover,
+.v4-stage .v4-card:hover {
+  box-shadow: 0 26px 54px -20px rgb(2 8 22 / 0.8);
+}
+
+/* Numbered index chip for card grids. */
+.v4-idx {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  color: var(--accent-c);
+  border: 1px solid var(--line);
+  border-radius: 0.375rem;
+  padding: 0.1875rem 0.4375rem;
+  background: var(--chip-bg);
+}
+
+/* ==================================================================
+   7 · METRICS — odometer figures
+   ================================================================== */
+.v4-metrics {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .v4-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .v4-metrics {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.v4-metric {
+  position: relative;
+  padding: 1.375rem 1.25rem;
+  background: var(--card-bg);
+  transition: background-color 0.3s ease;
+}
+.v4-metric:hover {
+  background: var(--chip-bg);
+}
+.v4-metric-fig {
+  display: flex;
+  align-items: baseline;
+  gap: 0.125rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 2.4vw + 1rem, 2.875rem);
+  line-height: 1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.v4-metric-fig sup {
+  font-size: 0.4em;
+  font-weight: 600;
+  color: var(--accent-c);
+  top: -0.9em;
+  margin-left: 0.1em;
+}
+.v4-metric-fig .u {
+  font-size: 0.5em;
+  color: var(--accent-c);
+  font-weight: 600;
+}
+.v4-metric dt {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.v4-metric > p:not([class]) {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+/* The bar under the figure grows to the share it represents. */
+.v4-metric-bar {
+  margin-top: 0.875rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.v4-metric-bar i {
+  display: block;
+  height: 100%;
+  width: var(--w, 50%);
+  background: linear-gradient(90deg, var(--v4-teal), var(--v4-flame));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1.4s var(--e-out) 0.2s;
+}
+.is-visible .v4-metric-bar i,
+.v4-metrics.is-visible .v4-metric-bar i {
+  transform: scaleX(1);
+}
+
+/* ==================================================================
+   8 · STORY RAIL — sticky visual, stepped copy
+
+   The long-form pattern V3 wanted and did not have: the graphic stays,
+   the argument moves. IntersectionObserver marks the active step; the
+   rail fills to it; the pane cross-fades the matching frame.
+   ================================================================== */
+/* The band the rail lives in clips its woven backdrop with `overflow:
+   clip`, not `overflow: hidden`.
+
+   This matters more than it looks. `hidden` makes the element a scroll
+   container, and a scroll container anywhere between a sticky element
+   and the viewport silently disables the sticking — the pane just
+   scrolls away. `clip` clips identically without creating one. V3's
+   `.has-backdrop` uses `hidden`, which is correct for the eight bands
+   that have nothing sticky inside them; this band needs its own. */
+.v4-rail-band {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+.v4-rail-band > .v4-shell {
+  z-index: 1;
+}
+
+.v4-rail {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .v4-rail {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 4rem;
+    align-items: start;
+  }
+  .v4-rail-pane {
+    position: sticky;
+    top: 6.5rem;
+  }
+
+  /* A sticky child cannot outlive its container. Without trailing room
+     under the last step, the rail ends while that step is still being
+     read and the pane is dragged up out of the viewport with it. The
+     blank space this reserves is the space the pane sits in. */
+  .v4-steps {
+    padding-bottom: 18vh;
+    --rail-end: calc(18vh + 1.25rem);
+  }
+}
+.v4-steps {
+  position: relative;
+  padding-left: 2.25rem;
+}
+/* The track ends at --rail-end, which the desktop rule below moves up past
+   the trailing space the sticky pane needs. Declaring it as a variable
+   rather than overriding `bottom` keeps the two rules order-independent. */
+.v4-steps::before {
+  content: '';
+  position: absolute;
+  left: 0.5625rem;
+  top: 0.75rem;
+  bottom: var(--rail-end, 3rem);
+  width: 1px;
+  background: var(--line);
+}
+/* --fill is written by JS in pixels, measured first-dot to current-dot. A
+   percentage would resolve against the padded box and overshoot the last
+   dot by exactly the trailing space. */
+.v4-steps::after {
+  content: '';
+  position: absolute;
+  left: 0.5625rem;
+  top: 0.75rem;
+  width: 1px;
+  height: var(--fill, 0px);
+  background: linear-gradient(180deg, var(--v4-teal), var(--v4-flame));
+  transition: height 0.5s var(--e-soft);
+  box-shadow: 0 0 10px rgb(0 165 179 / 0.6);
+}
+.v4-step {
+  position: relative;
+  padding: 0 0 3.25rem;
+  opacity: 0.42;
+  transition: opacity 0.45s ease;
+}
+.v4-step:last-child {
+  padding-bottom: 0;
+}
+.v4-step.is-active {
+  opacity: 1;
+}
+.v4-step > .dot {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.3125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  display: grid;
+  place-items: center;
+  transition:
+    border-color 0.35s ease,
+    background-color 0.35s ease,
+    transform 0.35s var(--e-out);
+}
+.v4-step > .dot::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--muted);
+  transition:
+    background-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.v4-step.is-active > .dot {
+  border-color: rgb(0 165 179 / 0.55);
+  transform: scale(1.12);
+}
+.v4-step.is-active > .dot::before {
+  background: var(--v4-flame);
+  box-shadow: 0 0 0 3px rgb(244 113 26 / 0.18);
+}
+.v4-step h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.v4-step .k {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-c);
+  display: block;
+  margin-bottom: 0.375rem;
+}
+.v4-step p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.v4-step ul {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+.v4-step li {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.3125rem;
+  color: var(--muted);
+  background: var(--chip-bg);
+}
+
+/* Frames in the sticky pane. Only the active one is drawn. */
+.v4-frames {
+  position: relative;
+}
+.v4-frame {
+  transition:
+    opacity 0.5s var(--e-soft),
+    transform 0.6s var(--e-out);
+}
+.v4-frame[data-off] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.985) translateY(8px);
+  pointer-events: none;
+}
+
+/* ==================================================================
+   9 · DEMO PLAYER — the product demos
+
+   Chrome of a video player around a scripted SVG stage: poster with a
+   play control, a scrubbable timeline with chapter ticks, elapsed and
+   total time, speed, captions, and fullscreen. It is not video: it is
+   drawn, so it is sharp at any size, weighs nothing, is keyboard
+   operable, and its captions are real text. js/demo.js drives it from
+   the JSON script in the panel.
+   ================================================================== */
+.v4-player {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1.125rem;
+  border: 1px solid rgb(255 255 255 / 0.13);
+  background:
+    radial-gradient(ellipse 80% 60% at 14% -6%, rgb(0 165 179 / 0.16), transparent 58%),
+    radial-gradient(ellipse 64% 52% at 96% 0%, rgb(244 113 26 / 0.14), transparent 62%),
+    linear-gradient(168deg, #0a2551, #081f4a 46%, #05142f);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.09),
+    0 26px 60px -22px rgb(2 8 22 / 0.75);
+  color: #f6fbff;
+}
+.v4-player::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  z-index: 4;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(102 203 213 / 0.5) 26%,
+    rgb(251 146 60 / 0.6) 74%,
+    transparent
+  );
+}
+
+/* Title bar */
+.v4-pl-head {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.9375rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+.v4-pl-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fca77a;
+  border: 1px solid rgb(244 113 26 / 0.35);
+  background: rgb(244 113 26 / 0.1);
+  border-radius: 999px;
+  padding: 0.1875rem 0.4375rem;
+  flex: none;
+}
+.v4-pl-rec i {
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: 999px;
+  background: var(--v4-flame);
+  animation: v4-blink 6s ease-in-out infinite;
+}
+@keyframes v4-blink {
+  0%,
+  62%,
+  100% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.25;
+  }
+}
+.v4-player.is-paused .v4-pl-rec i {
+  animation: none;
+  opacity: 0.4;
+}
+.v4-pl-name {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9fb8d4;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v4-pl-tag {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7d95b3;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 0.25rem;
+  padding: 0.1875rem 0.375rem;
+  flex: none;
+}
+
+/* Stage: fixed 16:9 so the timeline never jumps as scenes change. */
+.v4-pl-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(180deg, #061530, #04101f);
+}
+.v4-pl-stage svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Scanline texture — reads as a screen recording without costing legibility. */
+.v4-pl-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    repeating-linear-gradient(180deg, rgb(255 255 255 / 0.022) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse 96% 90% at 50% 44%, transparent 44%, rgb(3 10 26 / 0.5) 100%);
+}
+
+/* Poster overlay — what you see before you press play. */
+.v4-pl-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-content: center;
+  gap: 0.875rem;
+  justify-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  background: rgb(4 13 33 / 0.62);
+  backdrop-filter: blur(3px);
+  transition:
+    opacity 0.45s var(--e-soft),
+    visibility 0.45s;
+}
+.v4-player.is-started .v4-pl-poster {
+  opacity: 0;
+  visibility: hidden;
+}
+.v4-pl-poster h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.0625rem, 1.4vw + 0.6rem, 1.5rem);
+  letter-spacing: -0.01em;
+  max-width: 26ch;
+  text-wrap: balance;
+}
+.v4-pl-poster p {
+  font-size: 0.8125rem;
+  color: #adc0d6;
+  max-width: 46ch;
+}
+.v4-pl-big {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 999px;
+  border: 1px solid rgb(251 146 60 / 0.5);
+  background: rgb(244 113 26 / 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    transform 0.35s var(--e-out),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.v4-pl-big::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1px solid rgb(251 146 60 / 0.35);
+  animation: v4-halo 6.5s ease-out infinite;
+}
+@keyframes v4-halo {
+  0%,
+  68%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  84% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+}
+.v4-pl-big:hover {
+  transform: scale(1.08);
+  background: var(--v4-flame);
+  border-color: var(--v4-flame);
+}
+.v4-pl-big svg {
+  margin-left: 3px;
+}
+
+/* Caption strip — timed, real text, selectable.
+
+   A video player puts captions inside the frame. These stages carry
+   numbers in the lower band, and a caption laid over a readout obscures
+   the one thing the film is about. So the strip sits below the stage: no
+   overlap, no layout jump between captions, and the text can be copied. */
+.v4-pl-caption {
+  position: relative;
+  z-index: 1;
+  min-height: 3.5rem;
+  padding: 0.6875rem 0.9375rem 0.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.07);
+  background: linear-gradient(180deg, rgb(102 203 213 / 0.05), transparent 70%);
+}
+.v4-pl-caption p {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #e6eef8;
+  max-width: 62ch;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s var(--e-out);
+}
+.v4-pl-caption p.is-on {
+  opacity: 1;
+  transform: none;
+}
+.v4-pl-caption b {
+  color: var(--v4-flame-hi);
+  font-weight: 600;
+}
+.v4-player.is-cc-off .v4-pl-caption {
+  display: none;
+}
+
+/* Chrome bar */
+.v4-pl-chrome {
+  padding: 0.5rem 0.75rem 0.625rem;
+}
+.v4-pl-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4375rem;
+  padding: 0.5rem 0.5625rem 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(4 14 32 / 0.78);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.55);
+}
+.v4-pl-scrub {
+  position: relative;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+.v4-pl-track {
+  position: relative;
+  height: 3px;
+  width: 100%;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.14);
+  overflow: visible;
+  transition: height 0.2s ease;
+}
+.v4-pl-scrub:hover .v4-pl-track,
+.v4-pl-scrub:focus-visible .v4-pl-track {
+  height: 4px;
+}
+.v4-pl-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--t, 0%);
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--v4-teal), var(--v4-flame));
+}
+.v4-pl-knob {
+  position: absolute;
+  top: 50%;
+  left: var(--t, 0%);
+  width: 0.625rem;
+  height: 0.625rem;
+  margin: -0.3125rem 0 0 -0.3125rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow:
+    0 0 0 2px rgb(244 113 26 / 0.28),
+    0 1px 4px rgb(0 0 0 / 0.45);
+  transform: scale(0.85);
+  transition: transform 0.2s var(--e-out);
+}
+.v4-pl-scrub:hover .v4-pl-knob,
+.v4-pl-scrub:focus-visible .v4-pl-knob {
+  transform: scale(1);
+}
+.v4-pl-btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.v4-pl-transport,
+.v4-pl-utilities {
+  display: flex;
+  align-items: center;
+  gap: 0.1875rem;
+}
+.v4-pl-btn {
+  display: inline-grid;
+  place-items: center;
+  height: 1.75rem;
+  min-width: 1.75rem;
+  padding: 0 0.3125rem;
+  border-radius: 0.4375rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #b8c9de;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.04em;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.v4-pl-btn:hover {
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+}
+.v4-pl-btn[aria-pressed='true'] {
+  border-color: rgb(0 165 179 / 0.45);
+  background: rgb(0 165 179 / 0.16);
+  color: #a8e4ea;
+}
+.v4-pl-btn--main {
+  min-width: 2rem;
+  height: 2rem;
+  border-color: rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.08);
+  color: #f6fbff;
+}
+.v4-pl-btn--main:hover {
+  border-color: rgb(102 203 213 / 0.45);
+  background: rgb(0 165 179 / 0.18);
+}
+.v4-pl-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: #7d95b3;
+  letter-spacing: 0.03em;
+  margin-left: 0.25rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.v4-pl-time b {
+  color: #dbe7f5;
+  font-weight: 500;
+}
+.v4-pl-time-sep {
+  color: #5f7694;
+}
+
+/* Playlist thumbnails for the theatre. */
+.v4-reel {
+  display: grid;
+  gap: 0.625rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .v4-reel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .v4-reel {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+.v4-thumb {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(165deg, #0a2551, #06183b);
+  padding: 0.625rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    transform 0.3s var(--e-out),
+    box-shadow 0.3s ease;
+}
+.v4-thumb:hover {
+  transform: translateY(-3px);
+  border-color: rgb(0 165 179 / 0.5);
+}
+.v4-thumb[aria-current='true'] {
+  border-color: rgb(244 113 26 / 0.6);
+  box-shadow:
+    0 0 0 1px rgb(244 113 26 / 0.3),
+    0 12px 28px -14px rgb(244 113 26 / 0.5);
+}
+/* The thumbnail parts are spans inside a button, so each one has to be
+   told it is a block — aspect-ratio and margins do nothing on an inline. */
+.v4-thumb-art {
+  display: block;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0d2c65, #061530);
+  margin-bottom: 0.5rem;
+}
+.v4-thumb-art svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.v4-thumb-len {
+  position: absolute;
+  right: 0.25rem;
+  bottom: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.1875rem;
+  background: rgb(3 10 26 / 0.82);
+  color: #cddbec;
+}
+.v4-thumb-k {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #66cbd5;
+}
+.v4-thumb-n {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #f6fbff;
+  margin-top: 0.125rem;
+  line-height: 1.35;
+}
+
+/* Stage vocabulary the demo scripts draw with. */
+.dm-label {
+  font-family: var(--font-mono);
+  font-size: 6.5px;
+  letter-spacing: 0.1em;
+  fill: #8fa6c2;
+  text-transform: uppercase;
+}
+.dm-label-hi {
+  fill: #cddbec;
+}
+.dm-label-warm {
+  fill: #fca77a;
+}
+.dm-val {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  fill: #e6eef8;
+  font-variant-numeric: tabular-nums;
+}
+.dm-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  fill: #fff;
+}
+.dm-num-sm {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  fill: #fff;
+}
+.dm-panel {
+  fill: rgb(255 255 255 / 0.04);
+  stroke: rgb(255 255 255 / 0.1);
+  stroke-width: 0.7;
+}
+.dm-panel-hi {
+  fill: rgb(0 165 179 / 0.1);
+  stroke: rgb(102 203 213 / 0.4);
+}
+.dm-panel-warm {
+  fill: rgb(244 113 26 / 0.12);
+  stroke: rgb(251 146 60 / 0.5);
+}
+.dm-teal {
+  fill: #33b8c4;
+}
+.dm-flame {
+  fill: #f4711a;
+}
+.dm-line {
+  stroke: rgb(255 255 255 / 0.12);
+  stroke-width: 0.7;
+  fill: none;
+}
+.dm-line-teal {
+  stroke: #33b8c4;
+  stroke-width: 1.3;
+  fill: none;
+}
+.dm-line-flame {
+  stroke: #f4711a;
+  stroke-width: 1.3;
+  fill: none;
+}
+.dm-row {
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s var(--e-out);
+}
+.dm-in {
+  animation: v4-dm-in 0.45s var(--e-out) both;
+}
+@keyframes v4-dm-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.dm-cursor {
+  fill: #fff;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.6));
+  transition: transform 0.5s var(--e-out);
+}
+.dm-click {
+  fill: none;
+  stroke: #fb923c;
+  stroke-width: 1.2;
+}
+
+/* ==================================================================
+   9b · CINEMA BAND — the film behind the copy
+
+   The four model pages open their "watch it work" section as a band with the
+   film filling it and the copy on a scrim over the top.
+
+   Two decisions worth recording:
+
+   · The stage keeps `preserveAspectRatio="xMidYMid meet"`. Cover would have
+     been the obvious choice for a background, but these stages carry labels
+     within a few user units of every edge — the axis title, the column
+     headers, the tier chips — and cropping to cover cut at least one of them
+     off all four films. `meet` letterboxes instead, and the band's background
+     is the same gradient the plot draws, so the letterbox does not read as
+     one.
+   · Below 1024px the band stacks. A 16:9 film at 390px is 219px tall, and
+     nothing readable fits over that.
+   ================================================================== */
+.v4-cine {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(168deg, #0a2551 0%, #081f4a 46%, #05142f 100%);
+  color: #f6fbff;
+  --fg: #f6fbff;
+  --muted: #cbd5e1;
+  --line: rgb(255 255 255 / 0.12);
+  --accent-c: #33b8c4;
+}
+.v4-cine-media {
+  position: relative;
+  z-index: 0;
+}
+.v4-cine-body {
+  position: relative;
+  z-index: 2;
+  padding: 2.25rem 0 2.75rem;
+}
+.v4-cine-copy {
+  max-width: 34rem;
+}
+
+@media (min-width: 1024px) {
+  .v4-cine {
+    min-height: 34rem;
+    display: grid;
+  }
+  .v4-cine-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .v4-cine-body {
+    display: grid;
+    align-items: center;
+    padding: 4.5rem 0;
+    /* Let clicks reach the full-width player chrome underneath. */
+    pointer-events: none;
+  }
+  .v4-cine-copy,
+  .v4-cine-copy :is(a, button, [role='button'], input, textarea, select, label) {
+    pointer-events: auto;
+  }
+  /* The scrim. Opaque enough on the left to read 16px copy over a moving
+     plot, gone by 88% so the film is still a film. */
+  .v4-cine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      rgb(5 17 38 / 0.96) 0%,
+      rgb(5 17 38 / 0.9) 34%,
+      rgb(5 17 38 / 0.55) 58%,
+      rgb(5 17 38 / 0.12) 82%,
+      transparent 100%
+    );
+  }
+}
+
+/* ---- The player, as a background ---- */
+.v4-player--bg {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+}
+.v4-player--bg::before {
+  display: none;
+}
+.v4-player--bg .v4-pl-stage {
+  position: relative;
+  flex: 1 1 auto;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.v4-player--bg .v4-pl-stage svg {
+  width: 100%;
+  height: 100%;
+}
+.v4-player--bg .v4-pl-stage::after {
+  opacity: 0.35;
+}
+.v4-player--bg .v4-pl-caption {
+  margin: 0;
+  flex: none;
+  border-top: 1px solid rgb(255 255 255 / 0.06);
+  background: rgb(3 11 26 / 0.72);
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem 0.375rem;
+  pointer-events: none;
+}
+.v4-player--bg .v4-pl-caption p {
+  max-width: 46ch;
+  margin-left: auto;
+  text-align: right;
+}
+.v4-player--bg .v4-pl-chrome {
+  flex: none;
+  padding: 0;
+  pointer-events: auto;
+}
+.v4-player--bg .v4-pl-btn {
+  height: 2rem;
+  min-width: 2rem;
+  color: #dbe7f5;
+}
+.v4-player--bg .v4-pl-btn--main {
+  min-width: 2.25rem;
+  height: 2.25rem;
+}
+.v4-player--bg .v4-pl-toolbar {
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(3 11 26 / 0.94);
+  box-shadow: none;
+  padding: 0.625rem 1rem 0.75rem;
+}
+
+@media (min-width: 1024px) {
+  .v4-player--bg .v4-pl-stage {
+    aspect-ratio: auto;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  /* Stack stage → caption → chrome so controls never cover the plot. */
+  .v4-player--bg .v4-pl-caption {
+    padding: 0.5rem 1.5rem 0.375rem;
+  }
+  .v4-player--bg .v4-pl-caption p {
+    max-width: min(46ch, 52%);
+    margin-left: auto;
+  }
+  .v4-player--bg .v4-pl-toolbar {
+    padding: 0.75rem 1.5rem 0.875rem;
+  }
+  .v4-player--bg .v4-pl-scrub {
+    height: 1rem;
+  }
+}
+
+/* ==================================================================
+   10 · OVERLAYS — briefing wizard, command palette, drawer
+
+   One overlay primitive, three uses. Focus is trapped, Escape closes,
+   the page behind is inert and does not scroll, and the trigger gets
+   focus back on close.
+   ================================================================== */
+.v4-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  padding: 1rem;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s var(--e-soft),
+    visibility 0.3s;
+}
+.v4-ov[data-place='center'] {
+  place-items: center;
+}
+.v4-ov[data-place='top'] {
+  align-items: start;
+  justify-items: center;
+  padding-top: min(12vh, 6rem);
+}
+.v4-ov.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+.v4-ov-veil {
+  position: fixed;
+  inset: 0;
+  background: rgb(3 10 26 / 0.72);
+  backdrop-filter: blur(7px);
+  cursor: pointer;
+}
+.v4-ov-panel {
+  position: relative;
+  width: 100%;
+  border-radius: 1.25rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: linear-gradient(168deg, #0a2551, #081f4a);
+  transform: translateY(18px) scale(0.98);
+  opacity: 0;
+  transition:
+    transform 0.42s var(--e-out),
+    opacity 0.32s ease;
+}
+.v4-ov.is-open .v4-ov-panel {
+  transform: none;
+  opacity: 1;
+}
+
+/* ---- Briefing wizard ----
+
+   Light, not navy. The overlay is a form: eight fields, a textarea and a
+   review table, and dark form furniture on top of a dark blurred page was
+   two dark layers with the thing you have to read in the middle of them.
+
+   The panel sets the light section-context variables, which is what makes
+   this cheap — `.v4-input`, `.v4-select`, `.v4-chip`, `.v4-radio` and
+   `.v4-field > label` all read `--line`, `--card-bg` and `--fg`, so they
+   turn over with the container and none of them needed a rule here. Only
+   the wizard's own chrome is restated below. */
+.v4-wiz {
+  max-width: 46rem;
+  overflow: hidden;
+  --fg: #0d2c65;
+  --muted: #334155;
+  --line: #e2e8f0;
+  --accent-c: #007a85;
+  --card-bg: #ffffff;
+  --chip-bg: #f1f6fa;
+  border-color: #dfe8f1;
+  background:
+    radial-gradient(ellipse 72% 52% at 6% -6%, rgb(0 165 179 / 0.09), transparent 58%),
+    radial-gradient(ellipse 60% 46% at 98% 0%, rgb(244 113 26 / 0.07), transparent 60%),
+    linear-gradient(170deg, #ffffff, #f8fbfd 55%, #f1f6fa);
+  box-shadow: 0 40px 90px -30px rgb(13 44 101 / 0.45);
+  color: #0d2c65;
+}
+.v4-wiz-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 0.875rem;
+  border-bottom: 1px solid #eaf0f6;
+}
+@media (min-width: 640px) {
+  .v4-wiz-head {
+    padding: 1.5rem 1.75rem 1rem;
+  }
+}
+.v4-wiz-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+.v4-wiz-head p {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: #334155;
+}
+.v4-x {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  flex: none;
+  border-radius: 0.625rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.25s var(--e-out);
+}
+.v4-x:hover {
+  background: rgb(244 113 26 / 0.12);
+  color: #d84f08;
+  border-color: rgb(244 113 26 / 0.4);
+  transform: rotate(90deg);
+}
+
+/* Step meter */
+.v4-wiz-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid #eaf0f6;
+  background: #ffffff;
+}
+@media (min-width: 640px) {
+  .v4-wiz-meter {
+    padding: 0.875rem 1.75rem;
+  }
+}
+.v4-wiz-dot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.v4-wiz-dot i {
+  display: grid;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 999px;
+  border: 1px solid #dfe8f1;
+  font-size: 0.625rem;
+  transition: all 0.35s var(--e-out);
+}
+.v4-wiz-dot[data-on] {
+  color: #0d2c65;
+}
+.v4-wiz-dot[data-on] i {
+  border-color: rgb(0 122 133 / 0.6);
+  background: rgb(0 165 179 / 0.12);
+  color: #007a85;
+}
+.v4-wiz-dot[data-done] i {
+  border-color: rgb(0 165 179 / 0.5);
+  background: #007a85;
+  color: #fff;
+}
+.v4-wiz-rule {
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+.v4-wiz-dot[data-done] + .v4-wiz-rule {
+  background: linear-gradient(90deg, #007a85, #e2e8f0);
+}
+
+.v4-wiz-body {
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .v4-wiz-body {
+    padding: 1.5rem 1.75rem;
+  }
+}
+.v4-wiz-step[hidden] {
+  display: none;
+}
+.v4-wiz-step {
+  animation: v4-step-in 0.45s var(--e-out);
+}
+@keyframes v4-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.v4-wiz-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid #eaf0f6;
+  background: #ffffff;
+}
+@media (min-width: 640px) {
+  .v4-wiz-foot {
+    padding: 1rem 1.75rem 1.5rem;
+  }
+}
+.v4-wiz-note {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: #64748b;
+  letter-spacing: 0.04em;
+}
+
+/* Success state */
+.v4-done {
+  text-align: center;
+  padding: 2.5rem 1.5rem 3rem;
+}
+.v4-done-mark {
+  position: relative;
+  margin: 0 auto 1.25rem;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 999px;
+  background: rgb(0 165 179 / 0.1);
+  border: 1px solid rgb(0 122 133 / 0.45);
+  color: #007a85;
+}
+.v4-done-mark::before,
+.v4-done-mark::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  border: 1px solid rgb(0 122 133 / 0.35);
+  animation: v4-done-ring 2.6s var(--e-out) 1 both;
+}
+.v4-done-mark::after {
+  animation-delay: 0.3s;
+}
+@keyframes v4-done-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+.v4-done-mark svg {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: v4-tick 700ms var(--e-out) 0.15s forwards;
+}
+@keyframes v4-tick {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.v4-done h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.375rem;
+  color: #0d2c65;
+}
+.v4-done p {
+  margin: 0.5rem auto 0;
+  max-width: 40ch;
+  font-size: 0.875rem;
+  color: #334155;
+}
+.v4-done-recap {
+  margin: 1.5rem auto 0;
+  max-width: 26rem;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  overflow: hidden;
+}
+.v4-done-recap div {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5625rem 0.75rem;
+  font-size: 0.75rem;
+  border-bottom: 1px solid #eef3f8;
+}
+.v4-done-recap div:last-child {
+  border-bottom: 0;
+}
+.v4-done-recap dt {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64748b;
+  width: 6.5rem;
+  flex: none;
+}
+.v4-done-recap dd {
+  color: #0d2c65;
+  min-width: 0;
+}
+
+/* ---- Command palette ---- */
+.v4-cmd {
+  max-width: 40rem;
+  overflow: hidden;
+  background: linear-gradient(172deg, #0a2551, #071734);
+  box-shadow: 0 40px 90px -28px rgb(2 8 22 / 0.9);
+  color: #f6fbff;
+}
+.v4-cmd-in {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.1);
+}
+.v4-cmd-in svg {
+  color: #66cbd5;
+  flex: none;
+}
+.v4-cmd-in input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #f6fbff;
+  font-size: 0.9375rem;
+}
+.v4-cmd-in input::placeholder {
+  color: #7d95b3;
+}
+.v4-kbd {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  padding: 0.1875rem 0.375rem;
+  border-radius: 0.3125rem;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(255 255 255 / 0.06);
+  color: #9fb8d4;
+  white-space: nowrap;
+}
+.v4-cmd-list {
+  max-height: min(56vh, 26rem);
+  overflow-y: auto;
+  padding: 0.5rem;
+  scrollbar-width: thin;
+}
+.v4-cmd-group {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6d86a6;
+  padding: 0.625rem 0.625rem 0.3125rem;
+}
+.v4-cmd-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.5625rem 0.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #dbe7f5;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.8125rem;
+}
+.v4-cmd-item .ic {
+  color: #66cbd5;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.v4-cmd-item .sub {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6d86a6;
+  flex: none;
+}
+.v4-cmd-item.is-sel {
+  background: rgb(0 165 179 / 0.16);
+  border-color: rgb(0 165 179 / 0.4);
+  color: #fff;
+}
+.v4-cmd-item.is-sel .sub {
+  color: #a8e4ea;
+}
+.v4-cmd-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #7d95b3;
+}
+.v4-cmd-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.625rem 1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6d86a6;
+}
+
+/* Header search trigger */
+.v4-search {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.5rem 0.4375rem 0.625rem;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.05);
+  color: #9fb8d4;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+.v4-search:hover {
+  border-color: rgb(102 203 213 / 0.5);
+  color: #dbe7f5;
+  background: rgb(0 165 179 / 0.1);
+}
+/* Only from 1280px: below that the nav already fills the bar, and a search
+   pill that wraps the header is worse than no search pill. ⌘K still works. */
+@media (min-width: 1280px) {
+  .v4-search {
+    display: inline-flex;
+  }
+}
+
+.v4-search-mobile {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.05);
+  color: #9fb8d4;
+  font-size: 0.8125rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+.v4-search-mobile span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v4-search-mobile:hover {
+  border-color: rgb(102 203 213 / 0.5);
+  color: #dbe7f5;
+  background: rgb(0 165 179 / 0.1);
+}
+.v4-search-mobile svg {
+  color: #66cbd5;
+  flex: none;
+}
+
+/* ==================================================================
+   11 · FORMS
+   ================================================================== */
+.v4-form-grid {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .v4-form-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.v4-col-2 {
+  grid-column: 1 / -1;
+}
+
+.v4-field {
+  position: relative;
+}
+.v4-field > label,
+.v4-field > .v4-lbl {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4375rem;
+}
+.v4-field > label .req,
+.v4-field > .v4-lbl .req {
+  color: var(--v4-flame);
+  margin-left: 0.1875rem;
+}
+.v4-input,
+.v4-select,
+.v4-textarea {
+  width: 100%;
+  border-radius: 0.625rem;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  color: var(--fg);
+  padding: 0.6875rem 0.8125rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+  appearance: none;
+}
+.v4-textarea {
+  min-height: 7rem;
+  resize: vertical;
+  line-height: 1.6;
+}
+.v4-input::placeholder,
+.v4-textarea::placeholder {
+  color: rgb(148 163 184 / 0.8);
+}
+.v4-input:focus,
+.v4-select:focus,
+.v4-textarea:focus {
+  outline: 0;
+  border-color: rgb(0 165 179 / 0.7);
+  box-shadow: 0 0 0 3px rgb(0 165 179 / 0.18);
+}
+.v4-select {
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+.v4-stage .v4-select,
+.section-dark .v4-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2366cbd5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+.v4-wiz .v4-select option {
+  background: #ffffff;
+  color: #0d2c65;
+}
+
+/* Error state: orange, because an error is the thing you should look at. */
+.v4-field.is-bad .v4-input,
+.v4-field.is-bad .v4-select,
+.v4-field.is-bad .v4-textarea {
+  border-color: rgb(244 113 26 / 0.8);
+  box-shadow: 0 0 0 3px rgb(244 113 26 / 0.14);
+}
+.v4-err {
+  display: none;
+  align-items: center;
+  gap: 0.3125rem;
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--v4-flame-hi);
+}
+.v4-field.is-bad .v4-err {
+  display: flex;
+}
+.v4-hint {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.v4-count {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--muted);
+  float: right;
+}
+
+/* Chip choices — a multi-select that reads as tags, not checkboxes. */
+.v4-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.v4-chip {
+  position: relative;
+}
+.v4-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.v4-chip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  padding: 0.5rem 0.8125rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  color: var(--fg);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.25s var(--e-out);
+}
+.v4-chip span::before {
+  content: '';
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--line);
+  flex: none;
+  transition: all 0.25s ease;
+}
+.v4-chip span:hover {
+  border-color: rgb(0 165 179 / 0.5);
+  transform: translateY(-1px);
+}
+.v4-chip input:checked + span {
+  border-color: rgb(0 165 179 / 0.7);
+  background: rgb(0 165 179 / 0.13);
+  color: var(--fg);
+}
+.v4-chip input:checked + span::before {
+  background: #007a85
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E")
+    center / 11px no-repeat;
+  border-color: #007a85;
+}
+.v4-chip input:focus-visible + span {
+  outline: 2px solid var(--accent-c);
+  outline-offset: 2px;
+}
+
+/* Radio cards — one decision, laid out as surfaces. */
+.v4-radios {
+  display: grid;
+  gap: 0.625rem;
+}
+@media (min-width: 520px) {
+  .v4-radios--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.v4-radio {
+  position: relative;
+}
+.v4-radio input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.v4-radio span {
+  display: block;
+  height: 100%;
+  padding: 0.8125rem 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: all 0.28s var(--e-out);
+}
+.v4-radio b {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+.v4-radio small {
+  display: block;
+  margin-top: 0.1875rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.v4-radio span:hover {
+  border-color: rgb(0 165 179 / 0.5);
+  transform: translateY(-2px);
+}
+.v4-radio input:checked + span {
+  border-color: rgb(0 165 179 / 0.75);
+  background: rgb(0 165 179 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(0 165 179 / 0.25);
+}
+.v4-radio input:focus-visible + span {
+  outline: 2px solid var(--accent-c);
+  outline-offset: 2px;
+}
+
+/* Honeypot — bots fill it, humans never see it. */
+.v4-pot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Submit spinner */
+.v4-spin {
+  width: 0.9375rem;
+  height: 0.9375rem;
+  border-radius: 999px;
+  border: 2px solid rgb(255 255 255 / 0.3);
+  border-top-color: #fff;
+  animation: v4-rot 0.7s linear infinite;
+}
+@keyframes v4-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+button[data-busy] .v4-btn-label {
+  opacity: 0.6;
+}
+
+/* ==================================================================
+   12 · SUB-NAV — in-page section index
+   ================================================================== */
+.v4-subnav {
+  position: sticky;
+  top: 4rem;
+  z-index: 30;
+  border-bottom: 1px solid var(--line);
+  background: rgb(255 255 255 / 0.88);
+  backdrop-filter: blur(10px) saturate(150%);
+}
+@media (min-width: 1024px) {
+  .v4-subnav {
+    top: 4.75rem;
+  }
+}
+.v4-subnav-in {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0.5rem 0;
+}
+.v4-subnav-in::-webkit-scrollbar {
+  display: none;
+}
+.v4-sn {
+  position: relative;
+  flex: none;
+  padding: 0.4375rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #475569;
+  white-space: nowrap;
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease;
+}
+.v4-sn:hover {
+  color: #0d2c65;
+  background: #f1f6fa;
+}
+.v4-sn[aria-current='true'] {
+  color: #fff;
+  background: #007a85;
+}
+.v4-sn-lead {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+  padding-right: 0.625rem;
+  margin-right: 0.375rem;
+  border-right: 1px solid #e2e8f0;
+  flex: none;
+}
+
+/* ==================================================================
+   13 · TOASTS
+   ================================================================== */
+.v4-toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 90;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: end;
+  pointer-events: none;
+}
+.v4-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  max-width: 22rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.13);
+  background: linear-gradient(165deg, #0a2551, #071734);
+  box-shadow: 0 20px 46px -20px rgb(2 8 22 / 0.85);
+  color: #f6fbff;
+  font-size: 0.8125rem;
+  pointer-events: auto;
+  animation: v4-toast-in 0.45s var(--e-out) both;
+}
+.v4-toast.is-out {
+  animation: v4-toast-out 0.35s var(--e-soft) both;
+}
+@keyframes v4-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+}
+@keyframes v4-toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+.v4-toast .ic {
+  color: #66cbd5;
+  flex: none;
+  margin-top: 0.0625rem;
+}
+.v4-toast[data-kind='warn'] .ic {
+  color: var(--v4-flame-hi);
+}
+.v4-toast b {
+  display: block;
+  font-weight: 600;
+}
+.v4-toast p {
+  color: #adc0d6;
+  margin-top: 0.125rem;
+}
+
+/* ==================================================================
+   14 · PROOF — anonymised engagement wall
+
+   The reference-site pattern V3 refused for a good reason: Klugminds'
+   client figures are anonymised, so there is no logo wall and no
+   attributed quote. What there is: the shape of the engagement, the
+   sector, and the measured number. Same honesty, more presence.
+   ================================================================== */
+.v4-wall {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .v4-wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .v4-wall {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.v4-proof {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  overflow: hidden;
+  transition:
+    transform 0.38s var(--e-out),
+    box-shadow 0.38s var(--e-out),
+    border-color 0.3s ease;
+}
+.v4-proof::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--v4-teal), var(--v4-flame));
+  opacity: 0.55;
+  transition: opacity 0.3s ease;
+}
+.v4-proof:hover {
+  transform: translateY(-4px);
+  border-color: rgb(0 165 179 / 0.35);
+  box-shadow: 0 24px 50px -22px rgb(13 44 101 / 0.3);
+}
+.v4-proof:hover::before {
+  opacity: 1;
+}
+.v4-proof-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-c);
+}
+.v4-proof-top span {
+  margin-left: auto;
+  color: var(--muted);
+}
+.v4-proof h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 1.45;
+}
+/* Scoped to the unclassed paragraphs on purpose: a bare `.v4-proof p` would
+   out-specify .v4-proof-top and .v4-proof-fig and shrink both. */
+.v4-proof-fig {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.v4-proof-fig em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--v4-flame);
+}
+.v4-proof > p:not([class]) {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: auto;
+}
+
+/* ==================================================================
+   14b · FAQ — native <details>, styled
+
+   A disclosure widget the browser already implements correctly. The only
+   thing scripted is closing the others when one opens.
+   ================================================================== */
+.v4-faq {
+  display: grid;
+  gap: 0.625rem;
+}
+.v4-faq details {
+  border: 1px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--card-bg);
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+.v4-faq details[open] {
+  border-color: rgb(0 165 179 / 0.38);
+}
+.v4-faq summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9375rem 1.125rem;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--fg);
+  list-style: none;
+}
+.v4-faq summary::-webkit-details-marker {
+  display: none;
+}
+.v4-faq summary::after {
+  content: '';
+  margin-left: auto;
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: none;
+  border-right: 1.5px solid var(--accent-c);
+  border-bottom: 1.5px solid var(--accent-c);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.3s var(--e-out);
+}
+.v4-faq details[open] summary::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.v4-faq summary:hover {
+  background: var(--chip-bg);
+}
+.v4-faq .a {
+  padding: 0 1.125rem 1.125rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 62ch;
+}
+.v4-faq details[open] .a {
+  animation: v4-faq-in 0.4s var(--e-out);
+}
+@keyframes v4-faq-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* ==================================================================
+   14c · DIAGRAMS — the story-rail frames
+
+   A different class of drawing from a `.viz` instrument: nothing here is
+   operable, exposed to assistive tech as data, or carrying a live number.
+   It is a labelled diagram, which is why it may repeat where a `.viz`
+   panel may not.
+   ================================================================== */
+.v4-diagram {
+  position: relative;
+  border-radius: 1.125rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background:
+    radial-gradient(ellipse 76% 58% at 14% -4%, rgb(0 165 179 / 0.14), transparent 58%),
+    radial-gradient(ellipse 62% 50% at 96% 2%, rgb(244 113 26 / 0.12), transparent 60%),
+    linear-gradient(168deg, #0a2551, #071734);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 22px 50px -24px rgb(2 8 22 / 0.75);
+  padding: 1rem;
+  overflow: hidden;
+}
+.v4-diagram figcaption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7d95b3;
+  margin-bottom: 0.625rem;
+}
+.v4-diagram figcaption b {
+  color: #a8e4ea;
+  font-weight: 500;
+}
+.v4-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.dg-l {
+  font-family: var(--font-mono);
+  font-size: 6.5px;
+  letter-spacing: 0.1em;
+  fill: #8fa6c2;
+  text-transform: uppercase;
+}
+.dg-l-hi {
+  fill: #cddbec;
+}
+.dg-l-warm {
+  fill: #fca77a;
+}
+.dg-box {
+  fill: rgb(255 255 255 / 0.05);
+  stroke: rgb(255 255 255 / 0.12);
+  stroke-width: 0.7;
+}
+.dg-box-hi {
+  fill: rgb(0 165 179 / 0.12);
+  stroke: rgb(102 203 213 / 0.42);
+  stroke-width: 0.8;
+}
+.dg-box-warm {
+  fill: rgb(244 113 26 / 0.12);
+  stroke: rgb(251 146 60 / 0.5);
+  stroke-width: 0.8;
+}
+.dg-wire {
+  stroke: rgb(102 203 213 / 0.45);
+  stroke-width: 0.9;
+  fill: none;
+}
+.dg-wire-warm {
+  stroke: rgb(244 113 26 / 0.6);
+  stroke-width: 1.1;
+  fill: none;
+}
+.dg-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  fill: #fff;
+}
+
+/* ------------------------------------------------------------------
+   Inherited fix, kept here rather than in the V3 generators.
+
+   The outcome figures are set at display size and are not always
+   numbers — "Documented" is one of them. In a 3-up grid each column is
+   about 176px at the 640px breakpoint, and a 36px unbreakable word is
+   wider than that, which pushed the document 5px sideways on
+   solution-alternative-credit.html from 640px to roughly 900px. A
+   hyphenated break is the smallest correct fix: numbers never trigger
+   it, and the word breaks where English allows rather than anywhere.
+   ------------------------------------------------------------------ */
+p.font-display.t-accent {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ==================================================================
+   15 · SMALL PARTS
+   ================================================================== */
+.v4-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 12%, var(--line) 88%, transparent);
+}
+.v4-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.3125rem;
+  border: 1px solid var(--line);
+  background: var(--chip-bg);
+  color: var(--muted);
+}
+.v4-badge--warm {
+  border-color: rgb(244 113 26 / 0.4);
+  background: rgb(244 113 26 / 0.08);
+  color: var(--v4-flame);
+}
+.v4-badge--cool {
+  border-color: rgb(0 165 179 / 0.4);
+  background: rgb(0 165 179 / 0.08);
+  color: var(--accent-c);
+}
+
+/* Section heading block used by every new band. */
+.v4-head {
+  max-width: 46rem;
+}
+.v4-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  font-size: clamp(1.75rem, 2.2vw + 1rem, 2.625rem);
+  color: var(--fg);
+  text-wrap: balance;
+}
+.v4-head p {
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* Split feature row: copy one side, instrument the other. */
+.v4-split {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .v4-split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3.5rem;
+  }
+  .v4-split--flip > :first-child {
+    order: 2;
+  }
+}
+
+/* Corner brackets — the machined detail from the viz panels, reusable. */
+.v4-brackets {
+  position: relative;
+}
+.v4-brackets::before,
+.v4-brackets::after {
+  content: '';
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  pointer-events: none;
+  border-color: rgb(0 165 179 / 0.5);
+}
+.v4-brackets::before {
+  left: -0.375rem;
+  top: -0.375rem;
+  border-left: 1px solid;
+  border-top: 1px solid;
+}
+.v4-brackets::after {
+  right: -0.375rem;
+  bottom: -0.375rem;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+/* Scroll cue at the bottom of the stage. */
+.v4-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7d95b3;
+}
+.v4-cue i {
+  display: block;
+  width: 1px;
+  height: 1.75rem;
+  background: linear-gradient(180deg, var(--v4-teal), transparent);
+  animation: v4-cue 7s ease-in-out infinite;
+  transform-origin: 50% 0;
+}
+@keyframes v4-cue {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+button.v4-cue-btn {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+button.v4-cue-btn:hover,
+button.v4-cue-btn:focus-visible {
+  color: #a8c4e0;
+  outline: none;
+}
+button.v4-cue-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgb(102 203 213 / 0.45);
+  border-radius: 0.25rem;
+}
+
+/* Clip reveal for photographs and panels.
+
+   The clip is on the child, and the observer watches the parent. Doing both
+   on one element does not work: Chromium factors an element's own clip into
+   its intersection rectangle, so an element clipped to nothing never
+   intersects, `.is-visible` is never added, and the image stays invisible
+   for good. That is exactly what happened to every hero photograph on this
+   site — about, approach, careers and industries all showed an empty column
+   — until the clip moved down one level. */
+/* Descendant selectors — Next.js <Image> wraps <img> in a <span>. */
+[data-clip] img,
+[data-clip] picture,
+[data-clip] svg {
+  clip-path: inset(0 0 100% 0);
+  transition:
+    clip-path 1.1s var(--e-out),
+    transform 1.1s var(--e-out);
+  transform: scale(1.04);
+}
+[data-clip].is-visible img,
+[data-clip].is-visible picture,
+[data-clip].is-visible svg {
+  clip-path: inset(0 0 0 0);
+  transform: none;
+}
+
+/* Hero photographs sit inside a [data-reveal] column. On wide screens they are
+   already in view on load; waiting for a second IO pass on [data-clip] often
+   never fires, so the frame shows but the image stays clipped. Let the column
+   reveal drive the clip instead. */
+#hero [data-reveal].is-visible [data-clip] img,
+#hero [data-reveal].is-visible [data-clip] picture,
+#hero [data-reveal].is-visible [data-clip] svg {
+  clip-path: inset(0 0 0 0);
+  transform: none;
+}
+
+html:not(.js) [data-clip] img,
+html:not(.js) [data-clip] picture,
+html:not(.js) [data-clip] svg {
+  clip-path: none;
+  transform: none;
+}
+
+/* Parallax — JS writes --py. */
+[data-parallax] {
+  transform: translate3d(0, var(--py, 0px), 0);
+  will-change: transform;
+}
+
+/* Footer signature strip. */
+.v4-sig {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7d95b3;
+}
+.v4-sig b {
+  color: #a8e4ea;
+  font-weight: 500;
+}
+
+/* ==================================================================
+   16 · REDUCED MOTION
+
+   One block, everything ambient off. The base stylesheet collapses
+   durations, which parks an infinite loop on a random frame — so every
+   loop is switched to `none` explicitly rather than left to shorten.
+   ================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .v4-aurora i,
+  .v4-eyebrow b,
+  .v4-beam::before,
+  .v4-pl-rec i,
+  .v4-pl-big::before,
+  .v4-cue i,
+  .v4-done-mark::before,
+  .v4-done-mark::after,
+  .v4-spin {
+    animation: none !important;
+  }
+
+  .v4-net {
+    opacity: 0.3;
+  }
+  .v4-kw > span {
+    transform: none;
+    opacity: 1;
+  }
+  .v4-underline::after {
+    transform: scaleX(1);
+  }
+  [data-tilt] {
+    transform: none !important;
+  }
+  [data-parallax] {
+    transform: none !important;
+  }
+  [data-clip] img,
+  [data-clip] picture,
+  [data-clip] svg {
+    clip-path: none;
+    transform: none;
+  }
+  #hero [data-reveal].is-visible [data-clip] img,
+  #hero [data-reveal].is-visible [data-clip] picture,
+  #hero [data-reveal].is-visible [data-clip] svg {
+    clip-path: none;
+    transform: none;
+  }
+  .dm-in {
+    animation: none;
+  }
+}

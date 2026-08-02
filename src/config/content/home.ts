@@ -1,7 +1,16 @@
+import type { GlyphName } from '@/components/ui/Glyph';
 import type { FeatureIconKey } from '@/config/icons/feature-icons';
-import { CONTACT_MAILTO, industryAnchor, insightAnchor, ROUTES } from '@/constants/routes';
-import { mailtoLinks } from '@/lib/mailto';
-import { siteConfig } from '@/config/site';
+import { ROUTES, solutionRoute } from '@/constants/routes';
+
+type Cta = {
+  label: string;
+  href: string;
+};
+
+/* -------------------------------------------------------------------------
+   Legacy shared types, still imported by the not-yet-migrated Phase-2 pages
+   (about, approach, industries, …). Deleted with them in Phase 2 cleanup.
+   ------------------------------------------------------------------------- */
 
 export type FeatureItem = {
   title: string;
@@ -38,165 +47,202 @@ export type CaseStudy = {
 
 export const homeContent = {
   hero: {
-    eyebrow: 'PRODUCTION-GRADE AI',
-    title: 'AI systems that ship, scale, and stay reliable in production.',
-    description:
-      'Klugminds designs, builds, and operates production-grade machine learning for financial services, iGaming, e-commerce, logistics, and healthcare. Global delivery from India — engagements live across Europe, the UAE, and Canada.',
-    primaryCta: { label: 'Find your industry →', href: '#industries' },
-    secondaryCta: { label: 'Book a briefing →', href: CONTACT_MAILTO },
-  },
-  credibility: {
-    text: 'Practitioner-led delivery for regulated industries — fraud, AML, credit risk, and iGaming integrity. Every product ships with explainability, monitoring, and governance documentation.',
-  },
-  twoWays: {
-    eyebrow: 'WHAT KLUGMINDS DOES',
-    title: 'Two ways to move faster with AI.',
-    products: {
-      title: 'Klugminds Products',
-      subtitle: 'Ready-to-deploy models',
-      description:
-        'Ten hardened models for fraud, iGaming integrity, AML, credit risk, churn, and logistics. Each ships with explainability, monitoring, and an audit trail — weeks to production, not quarters.',
-      stat: '10 models · 4 families',
-      cta: { label: 'Browse the catalogue →', href: '/products' },
+    eyebrow: 'Production AI · regulated industries',
+    /** The lit phrase stays one span — gradient text must not be word-split. */
+    title: {
+      lead: 'AI systems that ship, scale, and ',
+      lit: 'stay reliable',
+      tail: ' in production.',
     },
-    services: {
-      title: 'Klugminds Services',
-      subtitle: 'Custom engagements, delivered end-to-end',
-      description:
-        'When off-the-shelf models are not enough — AI and ML consulting, full-stack engineering around the model, and DevSecOps to run it safely. One senior team from discovery through operations.',
-      stat: '4 practices · 1 team',
-      cta: { label: 'Scope an engagement →', href: '/services' },
-    },
-  },
-  industries: {
-    id: 'industries',
-    eyebrow: 'INDUSTRIES WE KNOW COLD',
-    title: 'Specialists, not generalists.',
-    items: [
-      {
-        title: 'Fintech',
-        description:
-          'Underwriting for the underbanked, real-time fraud, AML that clears backlogs instead of creating them.',
-        href: industryAnchor('fintech'),
-      },
-      {
-        title: 'iGaming',
-        description:
-          'Payment fraud, bonus abuse, collusion, and responsible-gaming controls for licensed operators.',
-        href: industryAnchor('igaming'),
-      },
-      {
-        title: 'E-commerce',
-        description:
-          'Recommendation and ranking, dynamic pricing, payment and return-fraud protection.',
-        href: industryAnchor('ecommerce'),
-      },
-      {
-        title: 'Logistics',
-        description:
-          'Route optimisation, ETA precision, demand forecasting for warehouse and fleet.',
-        href: industryAnchor('logistics'),
-      },
-      {
-        title: 'Healthcare',
-        description:
-          'Document intelligence, patient risk stratification, operational forecasting — built for HIPAA-grade environments.',
-        href: industryAnchor('healthcare'),
-      },
-    ] satisfies FeatureItem[],
-  },
-  proofPoints: {
-    eyebrow: 'WHY THE WORK HOLDS UP',
-    title: 'Engineering commitments, not adjectives.',
-    items: [
-      {
-        title: 'Explainable by default',
-        icon: 'explain',
-        description:
-          'Every scoring model ships with reason codes a regulator, a case reviewer, and a customer can understand.',
-      },
-      {
-        title: 'Audit-ready architecture',
-        icon: 'fileCheck',
-        description:
-          'Versioned data, versioned features, versioned models. Every decision reproducible for the life of the file.',
-      },
-      {
-        title: 'Secure from the first commit',
-        icon: 'lock',
-        description:
-          "DevSecOps isn't a phase we add later. Threat modelling, SBOMs, and secret scanning are wired into day one.",
-      },
-      {
-        title: 'Operated, not abandoned',
-        icon: 'operate',
-        description:
-          'We stay after go-live. Drift monitoring, retraining cadence, on-call runbooks — the parts most teams skip.',
-      },
-    ] satisfies FeatureItem[],
-  },
-  caseStudies: {
-    eyebrow: 'SELECTED CLIENT OUTCOMES',
-    title: 'Measured results from production deployments.',
     description:
-      'Anonymised outcomes from client engagements. Methodology and full write-ups on Insights.',
-    items: [
-      {
-        stat: '3.4×',
-        industry: 'European neobank · Fintech',
-        context:
-          'AML case throughput up 3.4× in ninety days — clearing a two-year alert backlog without additional headcount.',
-        href: insightAnchor('european-neobank-aml-backlog'),
-      },
-      {
-        stat: '61%',
-        industry: 'UAE marketplace · E-commerce',
-        context: 'Chargeback fraud losses down 61% without adding a single review analyst.',
-        href: insightAnchor('uae-marketplace-chargeback-fraud'),
-      },
-      {
-        stat: '4×',
-        industry: 'European iGaming operator',
-        context:
-          'Player-risk model surfacing 4× more responsible-gaming interventions than the previous rules engine.',
-        href: insightAnchor('european-igaming-rg-interventions'),
-      },
-      {
-        stat: '27%',
-        industry: 'Indian NBFC · Fintech',
-        context:
-          'Approval rate on underbanked segment up 27% at unchanged expected loss — model passed MRM review at first submission.',
-        href: insightAnchor('indian-nbfc-alt-credit'),
-      },
-    ] satisfies CaseStudy[],
-  },
-  partners: {
-    eyebrow: 'DELIVERY EXPERIENCE',
-    items: [
-      { name: 'MGT', href: 'https://mgt.eu/' },
-      { name: 'MilagroIT', href: 'https://www.milagroit.com/' },
-      { name: 'Curious Code Technologies', href: 'https://curiouscodetech.com/' },
-      { name: 'WizardTales', href: 'https://wizardtales.com/' },
-      { name: 'Velocious Solutions', href: 'https://www.linkedin.com/company/velocious-solutions/' },
-    ] satisfies Partner[],
-  },
-  footprint: {
-    eyebrow: 'GLOBAL FOOTPRINT',
-    title: 'Delivered from India. Trusted across four continents.',
-    regions: [
-      { label: 'India', detail: 'Delivery hub', region: 'in' },
-      { label: 'Europe', detail: 'Client base', region: 'eu' },
-      { label: 'UAE', detail: 'Client base', region: 'ae' },
-      { label: 'Canada', detail: 'Client base', region: 'ca' },
+      'Financial-crime machine learning — fraud, AML, iGaming integrity, and responsible gaming — built, explained, and operated by the engineers who wrote it. Four models are already in production shape and waiting for your data.',
+    secondaryCta: { label: 'Explore the solutions', href: ROUTES.solutions } satisfies Cta,
+    facts: [
+      { label: 'Delivery centre', value: 'Bengaluru' },
+      { label: 'Engagements', value: 'Europe · UAE · Canada' },
+      { label: 'Team shape', value: 'Seniors only, no hand-offs' },
     ],
-    caption:
-      'Senior engineers on client calls — timezone overlap for Europe, the UAE, and Canada.',
+    glassStrip: [
+      { label: 'Decision', value: 'Scored, not guessed' },
+      { label: 'Evidence', value: 'Versioned artefacts' },
+      { label: 'Operations', value: 'Monitored and paged' },
+    ],
   },
-  contact: {
-    title: 'Book a briefing with our team.',
-    description:
-      `Share your use case and timeline — we respond within one business day. For open roles, email ${siteConfig.careersEmail}.`,
-    primaryCta: { label: siteConfig.contactEmail, href: mailtoLinks.enquiry() },
-    secondaryCta: { label: 'Team & locations', href: ROUTES.contact },
+
+  capabilities: {
+    eyebrow: 'What we operate',
+    title: 'Eighteen capabilities, four practices, one senior team.',
+    aside:
+      'Each one is something we have already put into production and now operate — not a service line invented for a slide.',
+    chips: [
+      { icon: 'shield', label: 'Card & payment fraud' },
+      { icon: 'shield', label: 'AML transaction monitoring' },
+      { icon: 'radar', label: 'Sanctions & PEP screening' },
+      { icon: 'network', label: 'Mule-account detection' },
+      { icon: 'dice', label: 'iGaming integrity' },
+      { icon: 'dice', label: 'Bonus abuse & multi-accounting' },
+      { icon: 'network', label: 'Collusion & graph learning' },
+      { icon: 'target', label: 'Responsible gaming' },
+      { icon: 'target', label: 'Escalating-harm detection' },
+      { icon: 'wave', label: 'Device & behavioural signals' },
+      { icon: 'network', label: 'Agentic AI with guardrails' },
+      { icon: 'doc', label: 'Feature stores & lineage' },
+      { icon: 'wave', label: 'Model monitoring & drift' },
+      { icon: 'cloud', label: 'Cloud landing zones' },
+      { icon: 'shield', label: 'CI/CD security gates' },
+      { icon: 'doc', label: 'KYC document intelligence' },
+      { icon: 'network', label: 'Explainability & reason codes' },
+      { icon: 'chart', label: 'Champion / challenger' },
+    ] satisfies Array<{ icon: GlyphName; label: string }>,
+  },
+
+  solutions: {
+    eyebrow: 'WHAT WE BUILD',
+    title: 'One problem. Four models that compound.',
+    lede: 'Financial crime is one system, not four products — the four models share a schema, a feature store, and an evaluation harness, so a signal found in one is available to the others.',
+    cards: [
+      {
+        href: solutionRoute('fraud-detection'),
+        icon: 'shield-check',
+        title: 'Fraud Detection Suite',
+        text: 'Real-time scoring on device, behavioural, and network-graph signals, under 80\u00a0ms at p99.',
+      },
+      {
+        href: solutionRoute('aml-monitoring'),
+        icon: 'rings',
+        title: 'AML Monitoring',
+        text: 'Scenarios plus supervised scoring, triaged by expected value rather than by alert age.',
+      },
+      {
+        href: solutionRoute('igaming-integrity'),
+        icon: 'dice-5',
+        title: 'iGaming Integrity',
+        text: 'Bonus abuse, multi-accounting, and collusion, scored as one network rather than three rules.',
+      },
+      {
+        href: solutionRoute('responsible-gaming'),
+        icon: 'eye',
+        title: 'Responsible Gaming',
+        text: "Escalating-harm detection with a graded playbook — every tier's response written before it fires.",
+      },
+    ] satisfies Array<{ href: string; icon: GlyphName; title: string; text: string }>,
+    cardCta: 'Open the model',
+    cta: {
+      label: 'See what ships with each one →',
+      href: `${ROUTES.solutions}#stack`,
+    } satisfies Cta,
+  },
+
+  governance: {
+    eyebrow: 'WHY THE WORK HOLDS UP',
+    title: 'Every decision, reproducible.',
+    lede: 'Versioned data, features, and models. Select an artefact to see exactly what a reviewer gets when they ask how a decision was made.',
+    cards: [
+      {
+        icon: 'shield-check',
+        title: 'Explainable by default',
+        text: 'Reason codes a regulator, a reviewer, and a customer can all read.',
+      },
+      {
+        icon: 'doc-check',
+        title: 'Audit-ready',
+        text: 'Versioned data, features, and models. Every decision reproducible.',
+      },
+      {
+        icon: 'lock',
+        title: 'Secure from the first commit',
+        text: 'Threat modelling, SBOMs, and secret scanning wired in from day one.',
+      },
+      {
+        icon: 'refresh',
+        title: 'Operated, not abandoned',
+        text: 'Drift response, retraining cadence, and a named engineer after go-live.',
+      },
+    ] satisfies Array<{ icon: GlyphName; title: string; text: string }>,
+  },
+
+  impact: {
+    eyebrow: 'The impact',
+    title: 'Measured in production, not in a pitch deck.',
+    lede: 'Three engagements, three numbers that were counted after go-live. Client names are withheld because the figures are theirs, not ours — the shape of the work is not.',
+    cta: { label: 'Read the field notes', href: ROUTES.insights } satisfies Cta,
+    proofs: [
+      {
+        sector: 'Fintech',
+        org: 'European neobank',
+        heading: 'Nineteen analysts, six thousand alerts behind, no headcount coming.',
+        figure: '3.4',
+        unit: '× throughput',
+        text: 'A two-year AML backlog cleared in 90 days on flat headcount, by ranking alerts instead of closing them. Eighteen months on, no changes required.',
+        link: { label: 'How it was built', href: solutionRoute('aml-monitoring') },
+      },
+      {
+        sector: 'Payments',
+        org: 'UAE marketplace',
+        heading: 'Fraud losses were growing faster than the review team could.',
+        figure: '61',
+        unit: '% losses cut',
+        text: 'A model placed in front of the existing rules engine, with the cut-off owned by the risk committee rather than by engineering. No review analysts added.',
+        link: { label: 'How it was built', href: solutionRoute('fraud-detection') },
+      },
+      {
+        sector: 'iGaming',
+        org: 'European operator',
+        heading: 'The rules engine intervened late, or not at all.',
+        figure: '4',
+        unit: '× interventions',
+        text: 'Four graded tiers, each with a response written before it fires. More players reached earlier, and every intervention is defensible to the regulator.',
+        link: { label: 'How it was built', href: solutionRoute('responsible-gaming') },
+      },
+    ],
+    footnote: 'Anonymised client outcomes, measured in production. Past results, not guarantees.',
+  },
+
+  fieldNotes: {
+    eyebrow: 'FIELD NOTES',
+    title: 'What the people doing the work are writing.',
+    lede: 'One essay every second Thursday.',
+    notes: [
+      {
+        title: 'Why your AML model is not the problem — your alert taxonomy is.',
+        text: 'Supervised scoring rarely fails in isolation. It fails because the labels were never clean.',
+      },
+      {
+        title: 'Explainability is a product surface, not a compliance line item.',
+        text: 'Reason codes your reviewers, your customers, and your regulator can all read.',
+      },
+      {
+        title: 'Bonus abuse is a graph problem before it is a rules problem.',
+        text: 'What to instrument before you train your first collusion model.',
+      },
+    ],
+    noteCta: 'On Insights',
+    href: ROUTES.insights,
+  },
+
+  closing: {
+    eyebrow: '45 minutes',
+    title: 'Talk to the engineer who would build it.',
+    text: 'No business-development lead, no discovery deck. Bring the decision you are trying to improve; we will bring the two or three things we would look at first and tell you honestly whether we are the right team for it.',
+    secondaryCta: { label: 'Send a message instead', href: ROUTES.contact } satisfies Cta,
+    signature: ['One working day to a reply', 'Bengaluru delivery centre'],
+    signatureOverlap: { prefix: 'Overlap with', regions: ['Europe', 'UAE', 'Canada'] },
+    cards: [
+      {
+        label: 'If you already know the model',
+        text: 'Go straight to the catalogue — four models, each with what ships around it.',
+        link: { label: 'Solutions', href: ROUTES.solutions },
+      },
+      {
+        label: 'If you would rather watch first',
+        text: 'Every model page opens its film behind the copy. Half a minute, no form in front of it.',
+        link: { label: 'Watch fraud detection', href: `${solutionRoute('fraud-detection')}#demo` },
+      },
+      {
+        label: 'If you want to join instead',
+        text: 'Senior roles only, and the pod you would sit in is drawn on the page.',
+        link: { label: 'Careers', href: ROUTES.careers },
+      },
+    ],
   },
 } as const;

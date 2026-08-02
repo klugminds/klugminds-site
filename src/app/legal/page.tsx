@@ -42,45 +42,38 @@ export default function LegalPage() {
         <section aria-labelledby="company-identity-heading">
           <h2
             id="company-identity-heading"
-            className="text-foreground text-xl font-semibold tracking-tight"
+            className="font-display t-fg text-xl font-semibold tracking-tight"
           >
             Company identity
           </h2>
-          <dl className="border-border divide-border mt-4 divide-y rounded-lg border">
+          <dl className="content-card divide-foreground/10 mt-4 divide-y rounded-xl">
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Brand</dt>
-              <dd className="text-foreground text-sm font-medium">{siteConfig.name}</dd>
+              <dt className="t-muted text-sm">Brand</dt>
+              <dd className="t-fg text-sm font-medium">{siteConfig.name}</dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Website</dt>
-              <dd className="text-foreground text-sm font-medium">
-                <a
-                  href={siteUrl}
-                  className="text-accent-on-light transition-colors hover:text-accent-on-light-hover"
-                >
+              <dt className="t-muted text-sm">Website</dt>
+              <dd className="t-fg text-sm font-medium">
+                <a href={siteUrl} className="t-accent hover:t-fg font-medium">
                   {siteHost}
                 </a>
               </dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Legal entity name</dt>
-              <dd className="text-foreground text-sm font-medium">{companyConfig.legalName}</dd>
+              <dt className="t-muted text-sm">Legal entity name</dt>
+              <dd className="t-fg text-sm font-medium">{companyConfig.legalName}</dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Also known as</dt>
-              <dd className="text-foreground text-sm font-medium">
-                {siteConfig.alternateNames.join(', ')}
-              </dd>
+              <dt className="t-muted text-sm">Also known as</dt>
+              <dd className="t-fg text-sm font-medium">{siteConfig.alternateNames.join(', ')}</dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Registered office</dt>
-              <dd className="text-foreground text-sm font-medium">
-                {companyConfig.registeredOffice}
-              </dd>
+              <dt className="t-muted text-sm">Registered office</dt>
+              <dd className="t-fg text-sm font-medium">{companyConfig.registeredOffice}</dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Delivery centre</dt>
-              <dd className="text-foreground text-sm font-medium">
+              <dt className="t-muted text-sm">Delivery centre</dt>
+              <dd className="t-fg text-sm font-medium">
                 {siteConfig.locations.delivery.join(', ')}
               </dd>
             </div>
@@ -90,26 +83,22 @@ export default function LegalPage() {
         <section aria-labelledby="gst-registration-heading">
           <h2
             id="gst-registration-heading"
-            className="text-foreground text-xl font-semibold tracking-tight"
+            className="font-display t-fg text-xl font-semibold tracking-tight"
           >
             GST registration
           </h2>
-          <dl className="border-border divide-border mt-4 divide-y rounded-lg border">
+          <dl className="content-card divide-foreground/10 mt-4 divide-y rounded-xl">
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">GSTIN</dt>
-              <dd className="text-foreground font-mono text-sm font-medium">
-                {companyConfig.gstin}
-              </dd>
+              <dt className="t-muted text-sm">GSTIN</dt>
+              <dd className="t-fg font-mono text-sm font-medium">{companyConfig.gstin}</dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Registered from</dt>
-              <dd className="text-foreground text-sm font-medium">
-                {formatGstRegistrationDate()}
-              </dd>
+              <dt className="t-muted text-sm">Registered from</dt>
+              <dd className="t-fg text-sm font-medium">{formatGstRegistrationDate()}</dd>
             </div>
             <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:justify-between">
-              <dt className="text-muted text-sm">Registered to</dt>
-              <dd className="text-foreground text-sm font-medium">{companyConfig.legalName}</dd>
+              <dt className="t-muted text-sm">Registered to</dt>
+              <dd className="t-fg text-sm font-medium">{companyConfig.legalName}</dd>
             </div>
           </dl>
         </section>

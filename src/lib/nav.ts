@@ -3,9 +3,7 @@ export function isNavLinkActive(pathname: string, href: string, currentHash = ''
   const { path, hash } = splitNavHref(href);
 
   const pathMatches =
-    path === '/'
-      ? pathname === '/'
-      : pathname === path || pathname.startsWith(`${path}/`);
+    path === '/' ? pathname === '/' : pathname === path || pathname.startsWith(`${path}/`);
 
   if (!pathMatches) {
     return false;
@@ -51,13 +49,71 @@ export function handleNavLinkClick(
 
   if (window.location.hash === targetHash) {
     event.preventDefault();
-    document.getElementById(targetHash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document
+      .getElementById(targetHash.slice(1))
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
+const HASH_NOTIFY = 'km:hashchange';
+
+let historyPatched = false;
+let suppressHashNotify = false;
+
+function notifyHashListeners() {
+  if (suppressHashNotify) {
+    return;
+  }
+  // Defer so subscribers (e.g. tab explorers) never setState while Next.js
+  // router is still inside pushState / useInsertionEffect.
+  queueMicrotask(() => {
+    if (suppressHashNotify) {
+      return;
+    }
+    window.dispatchEvent(new Event(HASH_NOTIFY));
+  });
+}
+
+function ensureHistoryPatched() {
+  if (historyPatched || typeof window === 'undefined') {
+    return;
+  }
+  historyPatched = true;
+
+  const { pushState, replaceState } = history;
+
+  history.pushState = function patchedPushState(...args) {
+    pushState.apply(history, args);
+    notifyHashListeners();
+  };
+
+  history.replaceState = function patchedReplaceState(...args) {
+    replaceState.apply(history, args);
+    notifyHashListeners();
+  };
+}
+
+/** Update the hash without notifying subscribers (e.g. tab clicks that already updated UI). */
+export function replaceHashSilently(hash: string) {
+  const next = hash.startsWith('#') ? hash : `#${hash}`;
+  suppressHashNotify = true;
+  window.history.replaceState(null, '', `${window.location.pathname}${next}`);
+  queueMicrotask(() => {
+    suppressHashNotify = false;
+  });
+}
+
 export function subscribeToHash(callback: () => void): () => void {
-  window.addEventListener('hashchange', callback);
-  return () => window.removeEventListener('hashchange', callback);
+  ensureHistoryPatched();
+  const onNotify = () => callback();
+  window.addEventListener('hashchange', onNotify);
+  window.addEventListener('popstate', onNotify);
+  window.addEventListener(HASH_NOTIFY, onNotify);
+  return () => {
+    window.removeEventListener('hashchange', onNotify);
+    window.removeEventListener('popstate', onNotify);
+    window.removeEventListener(HASH_NOTIFY, onNotify);
+  };
 }
 
 export function getHashSnapshot(): string {

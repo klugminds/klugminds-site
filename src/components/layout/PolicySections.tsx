@@ -11,11 +11,11 @@ export function PolicySections({ sections }: PolicySectionsProps) {
         <section key={section.id} id={section.id} aria-labelledby={`${section.id}-heading`}>
           <h2
             id={`${section.id}-heading`}
-            className="text-foreground text-xl font-semibold tracking-tight"
+            className="font-display t-fg text-xl font-semibold tracking-tight"
           >
             {section.title}
           </h2>
-          <div className="text-muted mt-4 space-y-4 text-sm leading-relaxed sm:text-base">
+          <div className="t-muted mt-4 space-y-4 text-sm leading-relaxed sm:text-base">
             {section.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}

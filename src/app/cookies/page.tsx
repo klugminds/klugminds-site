@@ -38,36 +38,37 @@ export default function CookiesPage() {
         <PolicySections sections={cookiePolicy.sections} />
 
         <section aria-labelledby="cookie-table-heading">
-          <h2 id="cookie-table-heading" className="text-foreground text-xl font-semibold tracking-tight">
+          <h2
+            id="cookie-table-heading"
+            className="font-display t-fg text-xl font-semibold tracking-tight"
+          >
             Cookies we use
           </h2>
-          <div className="mt-4 overflow-x-auto rounded-xl border border-[var(--section-light-border)] bg-[var(--bg-soft)]">
-            <table className="min-w-full divide-y divide-[var(--section-light-border)] text-left text-sm">
+          <div className="content-card mt-4 overflow-x-auto rounded-xl">
+            <table className="divide-foreground/10 min-w-full divide-y text-left text-sm">
               <thead>
                 <tr>
-                  <th scope="col" className="px-4 py-3 font-semibold text-[var(--ink)]">
+                  <th scope="col" className="t-fg px-4 py-3 font-semibold">
                     Name
                   </th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-[var(--ink)]">
+                  <th scope="col" className="t-fg px-4 py-3 font-semibold">
                     Purpose
                   </th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-[var(--ink)]">
+                  <th scope="col" className="t-fg px-4 py-3 font-semibold">
                     Category
                   </th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-[var(--ink)]">
+                  <th scope="col" className="t-fg px-4 py-3 font-semibold">
                     Duration
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--section-light-border)]">
+              <tbody className="divide-foreground/10 divide-y">
                 {cookiePolicy.cookies.map((cookie) => (
                   <tr key={cookie.name}>
-                    <td className="px-4 py-3 font-mono text-xs text-[var(--ink)] sm:text-sm">
-                      {cookie.name}
-                    </td>
-                    <td className="px-4 py-3 text-[var(--slate-700)]">{cookie.purpose}</td>
-                    <td className="px-4 py-3 text-[var(--slate-700)]">{cookie.category}</td>
-                    <td className="px-4 py-3 text-[var(--slate-700)]">{cookie.duration}</td>
+                    <td className="t-fg px-4 py-3 font-mono text-xs sm:text-sm">{cookie.name}</td>
+                    <td className="t-muted px-4 py-3">{cookie.purpose}</td>
+                    <td className="t-muted px-4 py-3">{cookie.category}</td>
+                    <td className="t-muted px-4 py-3">{cookie.duration}</td>
                   </tr>
                 ))}
               </tbody>

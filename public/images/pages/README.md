@@ -1,7 +1,4 @@
-# Page photography
+# Page photography (V4)
 
-Context-matched hero and section images for marketing pages.
-
-**Fetch or refresh:** `python scripts/fetch-page-images.py`
-
-Sources: [Unsplash](https://unsplash.com) (free license). Credits noted in `src/config/images/page-visuals.ts`.
+Hero/media photographs used by inner pages: about, approach, careers,
+industries, services. Referenced from `src/config/images.ts`.
