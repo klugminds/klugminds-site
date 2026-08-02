@@ -8,6 +8,7 @@ import { CommandPaletteShortcut } from '@/components/ui/CommandPaletteShortcut';
 import { ROUTES, serviceRoute, solutionRoute } from '@/constants/routes';
 import { openBriefing } from '@/lib/briefing';
 import { OPEN_COMMAND_PALETTE_EVENT } from '@/lib/command-palette';
+import { cn } from '@/lib/cn';
 
 type IndexKind = 'page' | 'model' | 'service' | 'action' | 'demo';
 
@@ -391,7 +392,7 @@ export function CommandPalette() {
                   type="button"
                   role="option"
                   aria-selected={index === selected}
-                  className={`v4-cmd-item${index === selected ? 'is-sel' : ''}`}
+                  className={cn('v4-cmd-item', index === selected && 'is-sel')}
                   onClick={() => go(item)}
                   onPointerEnter={() => setSelected(index)}
                 >

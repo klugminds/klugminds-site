@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
+import { cn } from '@/lib/cn';
+
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -100,7 +102,7 @@ export function Overlay({
   return (
     <div
       ref={rootRef}
-      className={`v4-ov${open ? 'is-open' : ''}`}
+      className={cn('v4-ov', open && 'is-open')}
       data-place={place}
       role="dialog"
       aria-modal="true"

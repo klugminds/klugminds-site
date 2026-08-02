@@ -12,6 +12,8 @@ import {
   type ReactNode,
 } from 'react';
 
+import { cn } from '@/lib/cn';
+
 type KineticTag = 'h1' | 'h2' | 'h3' | 'p';
 
 type KineticHeadingProps = {
@@ -46,23 +48,54 @@ export function KineticHeading({ as: Tag = 'h2', className, children }: KineticH
     if (!el) {
       return;
     }
+
+    const reveal = () => setInView(true);
+
     if (
       window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
       !('IntersectionObserver' in window)
     ) {
-      queueMicrotask(() => setInView(true));
+      queueMicrotask(reveal);
       return;
     }
+
+    const threshold = 0.25;
+    const rootMargin = '0px 0px -8% 0px';
+    let revealed = false;
+    const revealOnce = () => {
+      if (revealed) {
+        return;
+      }
+      revealed = true;
+      reveal();
+      io.disconnect();
+    };
+
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          setInView(true);
-          io.disconnect();
+          revealOnce();
         }
       },
-      { threshold: 0.25, rootMargin: '0px 0px -8% 0px' },
+      { threshold, rootMargin },
     );
     io.observe(el);
+
+    // IO can miss above-the-fold heroes after client navigation or layout settle.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect();
+        if (r.height <= 0) {
+          return;
+        }
+        const rootBottom = window.innerHeight * 0.92;
+        const visible = Math.max(0, Math.min(r.bottom, rootBottom) - Math.max(r.top, 0));
+        if (visible / r.height >= threshold) {
+          revealOnce();
+        }
+      });
+    });
+
     return () => io.disconnect();
   }, []);
 
@@ -100,7 +133,7 @@ export function KineticHeading({ as: Tag = 'h2', className, children }: KineticH
     });
 
   return (
-    <Tag ref={ref} className={`${className ?? ''}${inView ? 'v4-kin-in' : ''}`}>
+    <Tag ref={ref} className={cn(className, inView && 'v4-kin-in')}>
       {split(children, 'kw')}
     </Tag>
   );

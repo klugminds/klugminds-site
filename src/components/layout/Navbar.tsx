@@ -11,6 +11,7 @@ import { SearchIcon } from '@/components/ui/SearchIcon';
 import { ctaNavLink, megaMenus } from '@/config/content/navigation';
 import { openBriefing } from '@/lib/briefing';
 import { openCommandPalette } from '@/lib/command-palette';
+import { cn } from '@/lib/cn';
 
 const FINE_POINTER_QUERY = '(hover: hover) and (pointer: fine)';
 const MEGA_CLOSE_DELAY_MS = 140;
@@ -144,7 +145,7 @@ export function Navbar() {
               {megaMenus.map((menu, index) => (
                 <li
                   key={menu.label}
-                  className={`mega${openMega === index ? 'is-open' : ''}`}
+                  className={cn('mega', openMega === index && 'is-open')}
                   onPointerEnter={() => hoverOpen(index)}
                   onPointerLeave={hoverClose}
                 >
@@ -272,7 +273,7 @@ export function Navbar() {
         </nav>
 
         {/* Mobile drawer */}
-        <div id="mobile-menu" className={`lg:hidden${mobileOpen ? 'is-open' : ''}`}>
+        <div id="mobile-menu" className={cn('lg:hidden', mobileOpen && 'is-open')}>
           <button type="button" className="v4-search-mobile" onClick={onOpenSearch}>
             <SearchIcon />
             <span>Search solutions, services, pages…</span>

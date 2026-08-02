@@ -6,6 +6,7 @@ import { Overlay } from '@/components/overlays/Overlay';
 import { siteConfig } from '@/config/site';
 import { OPEN_BRIEFING_EVENT, type OpenBriefingDetail } from '@/lib/briefing';
 import { composeMail, copyText, pairsToText, validators, type FormPair } from '@/lib/forms';
+import { cn } from '@/lib/cn';
 import { toast } from '@/lib/toast';
 
 const TOPICS = [
@@ -326,7 +327,7 @@ export function BriefingWizard() {
                     </p>
                   </div>
                   <div
-                    className={`v4-field${errors.stage ? 'is-bad' : ''}`}
+                    className={cn('v4-field', errors.stage && 'is-bad')}
                     style={{ marginTop: '1.125rem' }}
                   >
                     <p className="v4-lbl" id="lbl-stage">
@@ -359,7 +360,7 @@ export function BriefingWizard() {
                     <FieldError message={errors.stage} />
                   </div>
                   <div
-                    className={`v4-field${errors.outcome ? 'is-bad' : ''}`}
+                    className={cn('v4-field', errors.outcome && 'is-bad')}
                     style={{ marginTop: '1.125rem' }}
                   >
                     <label htmlFor="bw-what">
@@ -390,7 +391,7 @@ export function BriefingWizard() {
               {step === 1 ? (
                 <section className="v4-wiz-step" aria-label="Step 2 of 3">
                   <div className="v4-form-grid v4-form-grid--2">
-                    <div className={`v4-field${errors.name ? 'is-bad' : ''}`}>
+                    <div className={cn('v4-field', errors.name && 'is-bad')}>
                       <label htmlFor="bw-name">
                         Name
                         <span className="req" aria-hidden="true">
@@ -409,7 +410,7 @@ export function BriefingWizard() {
                       />
                       <FieldError message={errors.name} />
                     </div>
-                    <div className={`v4-field${errors.email ? 'is-bad' : ''}`}>
+                    <div className={cn('v4-field', errors.email && 'is-bad')}>
                       <label htmlFor="bw-email">
                         Work email
                         <span className="req" aria-hidden="true">
@@ -428,7 +429,7 @@ export function BriefingWizard() {
                       />
                       <FieldError message={errors.email} />
                     </div>
-                    <div className={`v4-field${errors.company ? 'is-bad' : ''}`}>
+                    <div className={cn('v4-field', errors.company && 'is-bad')}>
                       <label htmlFor="bw-co">
                         Company
                         <span className="req" aria-hidden="true">

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { TOAST_EVENT, type ToastDetail } from '@/lib/toast';
+import { cn } from '@/lib/cn';
 
 type ToastItem = ToastDetail & {
   id: number;
@@ -71,7 +72,7 @@ export function Toaster() {
       {items.map((item) => (
         <div
           key={item.id}
-          className={`v4-toast${item.out ? 'is-out' : ''}`}
+          className={cn('v4-toast', item.out && 'is-out')}
           data-kind={item.kind}
           role="status"
         >
