@@ -197,7 +197,7 @@ export function HarmPanel() {
         ))}
       </dl>
       <div className="viz-detail">
-        <h4>{tier.title}</h4>
+        <p className="viz-detail-title">{tier.title}</p>
         <p>{tier.action}</p>
       </div>
       <figcaption className="sr-only">

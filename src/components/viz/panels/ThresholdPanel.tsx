@@ -198,7 +198,7 @@ export function ThresholdPanel() {
         ))}
       </dl>
       <div className="viz-detail">
-        <h4>Score distribution</h4>
+        <p className="viz-detail-title">Score distribution</p>
         <p>
           Score distribution for legitimate and fraudulent transactions. Moving the cut-off trades
           fraud caught against good customers stopped.

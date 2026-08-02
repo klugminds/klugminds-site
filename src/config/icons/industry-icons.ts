@@ -1,11 +1,4 @@
-import {
-  Dices,
-  HeartPulse,
-  Landmark,
-  ShoppingBag,
-  Truck,
-  type LucideIcon,
-} from 'lucide-react';
+import { Dices, HeartPulse, Landmark, ShoppingBag, Truck, type LucideIcon } from 'lucide-react';
 
 const industryIcons: Record<string, LucideIcon> = {
   Fintech: Landmark,

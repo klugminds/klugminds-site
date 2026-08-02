@@ -1410,7 +1410,7 @@ body.page-ready main {
   background: linear-gradient(90deg, rgb(244 113 26 / 0.07), transparent 34%), rgb(8 20 45 / 0.62);
   padding: 0.75rem 0.875rem;
 }
-.viz-detail h4 {
+.viz-detail-title {
   font-family: var(--font-display);
   font-size: 0.8125rem;
   font-weight: 700;

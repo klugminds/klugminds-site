@@ -186,7 +186,7 @@ export function SelectableViz({
         </dl>
       ) : null}
       <div className="viz-detail">
-        <h4>{item.title}</h4>
+        <p className="viz-detail-title">{item.title}</p>
         <p>{item.text}</p>
         {item.kv?.length ? (
           <div className="viz-kv">
