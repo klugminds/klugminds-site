@@ -224,7 +224,7 @@ export const homeContent = {
     eyebrow: '45 minutes',
     title: 'Talk to the engineer who would build it.',
     text: 'No business-development lead, no discovery deck. Bring the decision you are trying to improve; we will bring the two or three things we would look at first and tell you honestly whether we are the right team for it.',
-    secondaryCta: { label: 'Send a message instead', href: ROUTES.contact } satisfies Cta,
+    secondaryCta: { label: 'Contact us instead', href: ROUTES.contact } satisfies Cta,
     signature: ['One working day to a reply', 'Bengaluru delivery centre'],
     signatureOverlap: { prefix: 'Overlap with', regions: ['Europe', 'UAE', 'Canada'] },
     cards: [

@@ -406,7 +406,7 @@ export function BriefingWizard() {
                         value={data.name}
                         onChange={(event) => set('name', event.target.value)}
                         aria-invalid={Boolean(errors.name)}
-                        placeholder="Priya Raman"
+                        placeholder="Jane Doe"
                       />
                       <FieldError message={errors.name} />
                     </div>
@@ -425,7 +425,7 @@ export function BriefingWizard() {
                         value={data.email}
                         onChange={(event) => set('email', event.target.value)}
                         aria-invalid={Boolean(errors.email)}
-                        placeholder="priya@company.com"
+                        placeholder="jane@company.com"
                       />
                       <FieldError message={errors.email} />
                     </div>

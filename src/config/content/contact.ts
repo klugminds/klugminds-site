@@ -59,7 +59,7 @@ export const contactContent = {
   ],
 
   form: {
-    eyebrow: 'Send a message',
+    eyebrow: 'Write to us',
     title: 'Six fields, and one that actually matters.',
     lede: 'The message box is the one we read first. A specific sentence about what is not working beats a paragraph about your industry.',
     disclaimer:

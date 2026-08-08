@@ -156,7 +156,7 @@ export function ContactForm() {
             type="text"
             name="name"
             autoComplete="name"
-            placeholder="Priya Raman"
+            placeholder="Jane Doe"
             value={data.name}
             onChange={(e) => set('name', e.target.value)}
           />
@@ -177,7 +177,7 @@ export function ContactForm() {
             type="email"
             name="email"
             autoComplete="email"
-            placeholder="priya@company.com"
+            placeholder="jane@company.com"
             value={data.email}
             onChange={(e) => set('email', e.target.value)}
           />
